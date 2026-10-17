@@ -48,7 +48,7 @@ function TicketDetails() {
     }
 
     return (
-        <div>
+        <div className="ticket-details">
             <h1>Ticket Details</h1>
 
             <p>

@@ -7,11 +7,18 @@ const registerUser = async (req, res) => {
     try {
         // Get data from request
         const { name, email, password } = req.body;
+        const username = typeof name === "string" ? name.trim() : "";
 
         // Check required fields
-        if (!name || !email || !password) {
+        if (!username || !email || !password) {
             return res.status(400).json({
-                message: "Please provide name, email and password"
+                message: "Please provide username, email and password"
+            });
+        }
+
+        if (!/^[A-Za-z][A-Za-z0-9_]{2,19}$/.test(username)) {
+            return res.status(400).json({
+                message: "Username must be 3-20 characters, start with a letter, and contain only letters, numbers, or underscores."
             });
         }
 
@@ -35,7 +42,7 @@ const registerUser = async (req, res) => {
 
         // Create user
         const user = await User.create({
-            name,
+            name: username,
             email,
             password: hashedPassword,
             role: "customer"

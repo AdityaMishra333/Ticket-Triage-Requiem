@@ -108,7 +108,7 @@ function Dashboard() {
                         <h3>No tickets yet</h3>
 
                         <p>
-                            Submit your first support ticket
+                            Submit your first ticket
                             to get started.
                         </p>
 

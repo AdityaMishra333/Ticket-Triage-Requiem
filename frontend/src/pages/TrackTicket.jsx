@@ -5,42 +5,59 @@ function TrackTicket() {
 
     const [ticketId, setTicketId] = useState("");
     const [ticket, setTicket] = useState(null);
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const trackTicket = async () => {
+    const trackTicket = async (event) => {
+        event.preventDefault();
+        const requestedId = ticketId.trim();
+        setTicket(null);
+        setMessage("");
+        if (!requestedId) {
+            setMessage("Enter a ticket ID to continue.");
+            return;
+        }
 
         try {
-
+            setLoading(true);
             const response = await api.get(
-                `/tickets/track/${ticketId}`
+                `/tickets/track/${encodeURIComponent(requestedId)}`
             );
 
+            if (response.data.ticketId?.toLowerCase() !== requestedId.toLowerCase()) {
+                setMessage("The returned ticket could not be verified. Check the ID and try again.");
+                return;
+            }
             setTicket(response.data);
 
         } catch (error) {
-
             console.error(error);
-
-            alert("Ticket not found");
-
+            setMessage(error.response?.data?.message || "Unable to find that ticket.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
 
-        <div>
+        <div className="track-ticket-container">
 
             <h1>Track Your Ticket</h1>
 
-            <input
-                type="text"
-                placeholder="Enter Ticket ID"
-                value={ticketId}
-                onChange={(e) => setTicketId(e.target.value)}
-            />
-
-            <button onClick={trackTicket}>
-                Track Ticket
-            </button>
+            <form onSubmit={trackTicket}>
+                <input
+                    type="text"
+                    name="ticketId"
+                    placeholder="Enter Ticket ID"
+                    value={ticketId}
+                    onChange={(e) => setTicketId(e.target.value)}
+                    required
+                />
+                {message && <p className="form-feedback error" role="alert">{message}</p>}
+                <button type="submit" disabled={loading}>
+                    {loading ? "Checking..." : "Track Ticket"}
+                </button>
+            </form>
 
             {ticket && (
 

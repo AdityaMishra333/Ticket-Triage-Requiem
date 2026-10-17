@@ -12,6 +12,8 @@ function CreateTicket() {
     });
 
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
+    const [createdTicketId, setCreatedTicketId] = useState("");
 
     const handleChange = (e) => {
         setFormData({
@@ -22,20 +24,32 @@ function CreateTicket() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setMessage("");
+        setCreatedTicketId("");
+
+        const cleanFormData = Object.fromEntries(
+            Object.entries(formData).map(([key, value]) => [key, value.trim()])
+        );
+        const missingField = Object.values(cleanFormData).some((value) => !value);
+        if (missingField) {
+            setMessage("Complete all fields before submitting.");
+            return;
+        }
 
         try {
             setLoading(true);
 
             const response = await api.post(
                 "/tickets",
-                formData
+                cleanFormData
             );
 
-            alert(
-                `Ticket created successfully!\nTicket ID: ${response.data.ticket.ticketId}`
-            );
-
-            navigate("/dashboard");
+            const ticketId = response.data.ticket?.ticketId;
+            if (!ticketId) {
+                setMessage("Ticket creation could not be verified. Please check your dashboard.");
+                return;
+            }
+            setCreatedTicketId(ticketId);
 
         } catch (error) {
             console.error("Create Ticket Error:", error);
@@ -46,17 +60,17 @@ function CreateTicket() {
                 return;
             }
 
-            alert(
-                error.response?.data?.message ||
-                "Failed to create ticket."
-            );
+            setMessage(error.response?.data?.message || "Failed to create ticket.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <div className="create-ticket-container">
+            <h1>Complaint Enquiry</h1>
+            <h4>Please describe your problem related to our service</h4>
+            <form onSubmit={handleSubmit}>
             <input
                 name="subject"
                 value={formData.subject}
@@ -78,10 +92,22 @@ function CreateTicket() {
                 placeholder="Contact details"
                 required
             />
+            {message && <p className="form-feedback error" role="alert">{message}</p>}
+            {createdTicketId && (
+                <p className="form-feedback success" role="status">
+                    Ticket created and confirmed. Ticket ID: {createdTicketId}
+                </p>
+            )}
             <button type="submit" disabled={loading}>
                 {loading ? "Creating..." : "Create Ticket"}
             </button>
+            {createdTicketId && (
+                <button type="button" onClick={() => navigate("/dashboard")}>
+                    Go to Dashboard
+                </button>
+            )}
         </form>
+        </div>
     );
 }
 
