@@ -3,8 +3,8 @@ export const isValidEmail = (email) => {
     return emailRegex.test(email);
 };
 
-export const isValidUsername = (username) => {
-    return /^[A-Za-z][A-Za-z0-9_]{2,19}$/.test(username);
+export const isValidName = (name) => {
+    return name.trim().length > 0;
 };
 
 export const isValidPassword = (password) => {

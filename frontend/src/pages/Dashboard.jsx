@@ -97,7 +97,7 @@ function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="dashboard-bg">
       <Navbar />
 
       <main className="dashboard-page">
@@ -318,6 +318,7 @@ function Dashboard() {
             </div>
           )}
         </section>
+
       </main>
     </div>
   );
