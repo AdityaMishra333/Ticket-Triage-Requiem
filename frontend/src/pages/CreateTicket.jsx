@@ -7,6 +7,7 @@ function CreateTicket() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    customerName: "",
     subject: "",
     item: "",
     serviceDate: "",
@@ -66,7 +67,7 @@ function CreateTicket() {
   };
 
   const handleReset = () => {
-    setFormData({ subject: "", item: "", serviceDate: "", description: "", contactDetails: "" });
+    setFormData({ customerName: "", subject: "", item: "", serviceDate: "", description: "", contactDetails: "" });
     setCreatedTicketId("");
     setMessage("");
   };
@@ -124,6 +125,21 @@ function CreateTicket() {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              <div className="form-group-field">
+                <label className="field-label" htmlFor="ticket-customer-name">
+                  Customer name
+                </label>
+                <input
+                  id="ticket-customer-name"
+                  className="field-input"
+                  name="customerName"
+                  value={formData.customerName}
+                  onChange={handleChange}
+                  placeholder="e.g. Jane Doe"
+                  required
+                />
+              </div>
+
               <div className="form-group-field">
                 <label className="field-label" htmlFor="ticket-subject">
                   Subject

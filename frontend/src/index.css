@@ -1183,6 +1183,7 @@ a:hover {
 /* Dashboard nature background */
 .dashboard-bg {
   min-height: 100vh;
+  display: flow-root;
   background:
     linear-gradient(rgba(6, 18, 12, 0.55), rgba(6, 18, 12, 0.7)),
     url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=70") center / cover fixed no-repeat;

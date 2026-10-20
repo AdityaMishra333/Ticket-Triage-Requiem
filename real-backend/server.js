@@ -15,6 +15,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use("/api/auth", userAuthRoutes)
+app.use("/api/tickets", require("./routes/tickets"))
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
