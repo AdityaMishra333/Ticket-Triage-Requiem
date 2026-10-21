@@ -98,7 +98,7 @@ function UserDashboard() {
   };
 
   return (
-    <div>
+    <div className="dashboard-bg">
       <Navbar />
 
       <main className="dashboard-page">
@@ -319,6 +319,7 @@ function UserDashboard() {
             </div>
           )}
         </section>
+
       </main>
     </div>
   );

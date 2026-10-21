@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { isValidEmail, isValidUsername } from "../utils/validation";
+import { isValidEmail, isValidName } from "../utils/validation";
 
 function Register() {
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ function Register() {
 
     const name = formData.name.trim();
     const email = formData.email.trim();
-    if (!isValidUsername(name)) {
-      setMessage("Username must be 3-20 characters, starting with a letter.");
+    if (!isValidName(name)) {
+      setMessage("Name is required.");
       return;
     }
     if (!isValidEmail(email)) {
@@ -49,26 +49,23 @@ function Register() {
 
     try {
       setSubmitting(true);
-      const response = await api.post("/auth/register", {
+      await api.post("/auth/create", {
         name,
         email: email.toLowerCase(),
         password: formData.password
       });
 
-      if (!response.data.user?.email) {
-        setMessage("Registration could not be verified. Please try again.");
-        return;
-      }
       navigate("/login", {
         state: {
-          email: response.data.user.email,
+          email: email.toLowerCase(),
           message: "Account created! You can now sign in."
         }
       });
     } catch (error) {
       console.error(error);
-      const errMessage = error.response?.data?.message;
-      if (errMessage?.toLowerCase().includes("already exists")) {
+      const data = error.response?.data;
+      const errMessage = (typeof data === "string" && data) || data?.message;
+      if (error.response?.status === 409) {
         setMessage("This email is already registered. Please log in.");
         navigate("/login", {
           state: {
@@ -77,7 +74,7 @@ function Register() {
           }
         });
       } else {
-        setMessage(errMessage || "Registration failed. Please try again.");
+        setMessage(errMessage || (error.response ? "Registration failed. Please try again." : "Cannot reach the server. Please try again."));
       }
     } finally {
       setSubmitting(false);
@@ -85,7 +82,7 @@ function Register() {
   };
 
   return (
-    <div className="auth-page">
+    <div className="auth-page dashboard-bg">
       <div className="auth-card">
         <div className="auth-header">
           <div className="brand-icon">
@@ -101,16 +98,16 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-name">
-              Username
+              Name
             </label>
             <input
               id="reg-name"
               className="field-input"
               type="text"
               name="name"
-              autoComplete="username"
+              autoComplete="name"
               required
-              placeholder="e.g. alex_rivera"
+              placeholder="e.g. Alex Rivera"
               value={formData.name}
               onChange={handleChange}
             />

@@ -71,7 +71,7 @@ function TicketDetails() {
   };
 
   return (
-    <div>
+    <div className="dashboard-bg">
       <Navbar />
 
       <main className="details-page">

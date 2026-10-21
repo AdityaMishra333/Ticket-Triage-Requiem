@@ -52,7 +52,7 @@ function TrackTicket() {
   };
 
   return (
-    <div>
+    <div className="dashboard-bg">
       <Navbar />
 
       <div className="page-container-narrow">

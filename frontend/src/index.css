@@ -1520,3 +1520,203 @@ a:hover {
     border-bottom: none;
   }
 }
+
+/* Dashboard nature background */
+.dashboard-bg {
+  min-height: 100vh;
+  display: flow-root;
+  background:
+    linear-gradient(rgba(6, 18, 12, 0.55), rgba(6, 18, 12, 0.7)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=70") center / cover fixed no-repeat;
+  background-color: #0b1a12;
+}
+
+.dashboard-bg .dashboard-header-row h1 {
+  color: #ffffff;
+}
+
+.dashboard-bg .dashboard-header-row p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Glass (frosted, transparent) surfaces on the dashboard */
+.dashboard-bg {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-subtle: rgba(255, 255, 255, 0.55);
+  --border: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.32);
+  --border-focus: rgba(255, 255, 255, 0.7);
+  --bg-subtle: rgba(255, 255, 255, 0.12);
+  --bg-hover: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.045);
+  --glass-blur: blur(14px) saturate(140%);
+}
+
+.dashboard-bg .app-navbar,
+.dashboard-bg .metrics-ribbon,
+.dashboard-bg .ticket-list-table,
+.dashboard-bg .grid-card,
+.dashboard-bg .search-input-field,
+.dashboard-bg .filter-tabs,
+.dashboard-bg .view-toggle {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dashboard-bg .app-navbar {
+  border-top: none;
+}
+
+.dashboard-bg .tab-btn.active,
+.dashboard-bg .view-btn.active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-bg .tab-count,
+.dashboard-bg .tab-btn.active .tab-count {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.dashboard-bg .search-input-field {
+  color: #ffffff;
+}
+
+.dashboard-bg .search-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dashboard-bg .user-avatar-circle {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.dashboard-bg .btn-signout-subtle:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fecaca;
+}
+
+.dashboard-bg .skeleton-box {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dashboard-bg .grid-card:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.dashboard-bg .btn-primary {
+  background-color: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+}
+
+.dashboard-bg .btn-primary:hover {
+  background-color: #ffffff;
+}
+
+/* Dashboard theme applied to all pages */
+.dashboard-bg .form-panel,
+.dashboard-bg .auth-card,
+.dashboard-bg .content-panel,
+.dashboard-bg .activity-content,
+.dashboard-bg .desc-text-box,
+.dashboard-bg .field-input,
+.dashboard-bg .field-textarea,
+.dashboard-bg .id-pill-large {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dashboard-bg .field-input,
+.dashboard-bg .field-textarea {
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.dashboard-bg .field-input:focus,
+.dashboard-bg .field-textarea:focus {
+  border-color: var(--border-focus);
+}
+
+.dashboard-bg .desc-text-box {
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: none;
+}
+
+.dashboard-bg .id-pill-large {
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-bg .activity-point {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.dashboard-bg .success-banner-box {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(134, 239, 172, 0.4);
+}
+
+.dashboard-bg .success-banner-box h3 {
+  color: #86efac;
+}
+
+.dashboard-bg .success-banner-box p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dashboard-bg .form-feedback.error {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(252, 165, 165, 0.4);
+  color: #fecaca;
+}
+
+.dashboard-bg .btn-secondary,
+.dashboard-bg .btn-ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid var(--border-strong);
+}
+
+.dashboard-bg .btn-secondary:hover,
+.dashboard-bg .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-bg .auth-footer-links button {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.dashboard-bg .password-toggle-btn:hover {
+  color: #ffffff;
+}
+
+.dashboard-bg .field-input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+  transition: background-color 9999s ease-out;
+}
+
+.dashboard-bg input[type="date"] {
+  color-scheme: dark;
+}
+
+.dashboard-bg .back-link:hover {
+  color: #ffffff;
+}
+
+.dashboard-bg .form-feedback.success {
+  background: rgba(34, 197, 94, 0.16);
+  border-color: rgba(134, 239, 172, 0.4);
+  color: #bbf7d0;
+}

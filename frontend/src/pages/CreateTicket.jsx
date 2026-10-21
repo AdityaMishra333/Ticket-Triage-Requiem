@@ -7,7 +7,10 @@ function CreateTicket() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    customerName: "",
     subject: "",
+    item: "",
+    serviceDate: "",
     description: "",
     contactDetails: ""
   });
@@ -64,7 +67,7 @@ function CreateTicket() {
   };
 
   const handleReset = () => {
-    setFormData({ subject: "", description: "", contactDetails: "" });
+    setFormData({ customerName: "", subject: "", item: "", serviceDate: "", description: "", contactDetails: "" });
     setCreatedTicketId("");
     setMessage("");
   };
@@ -77,7 +80,7 @@ function CreateTicket() {
   };
 
   return (
-    <div>
+    <div className="dashboard-bg">
       <Navbar />
 
       <div className="page-container-narrow">
@@ -123,6 +126,21 @@ function CreateTicket() {
           ) : (
             <form onSubmit={handleSubmit}>
               <div className="form-group-field">
+                <label className="field-label" htmlFor="ticket-customer-name">
+                  Customer name
+                </label>
+                <input
+                  id="ticket-customer-name"
+                  className="field-input"
+                  name="customerName"
+                  value={formData.customerName}
+                  onChange={handleChange}
+                  placeholder="e.g. Jane Doe"
+                  required
+                />
+              </div>
+
+              <div className="form-group-field">
                 <label className="field-label" htmlFor="ticket-subject">
                   Subject
                 </label>
@@ -133,6 +151,36 @@ function CreateTicket() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="e.g. Cannot access monthly billing invoice"
+                  required
+                />
+              </div>
+
+              <div className="form-group-field">
+                <label className="field-label" htmlFor="ticket-item">
+                  Item
+                </label>
+                <input
+                  id="ticket-item"
+                  className="field-input"
+                  name="item"
+                  value={formData.item}
+                  onChange={handleChange}
+                  placeholder="e.g. Annual maintenance plan"
+                  required
+                />
+              </div>
+
+              <div className="form-group-field">
+                <label className="field-label" htmlFor="ticket-service-date">
+                  Service date
+                </label>
+                <input
+                  id="ticket-service-date"
+                  className="field-input"
+                  type="date"
+                  name="serviceDate"
+                  value={formData.serviceDate}
+                  onChange={handleChange}
                   required
                 />
               </div>
