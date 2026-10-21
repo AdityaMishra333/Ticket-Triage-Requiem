@@ -7,12 +7,14 @@ export default function Navbar() {
   // Read stored user details if available
   let username = "My Account";
   let initials = "ME";
+  let isAdmin = false;
   try {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
       username = user.name || user.email?.split("@")[0] || "My Account";
       initials = (username.slice(0, 2) || "ME").toUpperCase();
+      isAdmin = user.role === "agent";
     }
   } catch {
     // fallback
@@ -58,21 +60,25 @@ export default function Navbar() {
             <span>Tickets</span>
           </button>
 
-          <button
-            type="button"
-            className={`nav-link ${isActive("/create-ticket") ? "active" : ""}`}
-            onClick={() => navigate("/create-ticket")}
-          >
-            <span>New Request</span>
-          </button>
+          {!isAdmin && (
+            <>
+              <button
+                type="button"
+                className={`nav-link ${isActive("/create-ticket") ? "active" : ""}`}
+                onClick={() => navigate("/create-ticket")}
+              >
+                <span>New Request</span>
+              </button>
 
-          <button
-            type="button"
-            className={`nav-link ${isActive("/track-ticket") ? "active" : ""}`}
-            onClick={() => navigate("/track-ticket")}
-          >
-            <span>Track</span>
-          </button>
+              <button
+                type="button"
+                className={`nav-link ${isActive("/track-ticket") ? "active" : ""}`}
+                onClick={() => navigate("/track-ticket")}
+              >
+                <span>Track</span>
+              </button>
+            </>
+          )}
         </nav>
 
         {/* User & Sign out */}

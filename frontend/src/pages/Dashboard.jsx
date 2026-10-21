@@ -2,8 +2,9 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import AdminDashboard from "./AdminDashboard";
 
-function Dashboard() {
+function UserDashboard() {
   const navigate = useNavigate();
 
   const [tickets, setTickets] = useState([]);
@@ -321,6 +322,23 @@ function Dashboard() {
       </main>
     </div>
   );
+}
+
+function getStoredRole() {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    return user.role || "";
+  } catch {
+    return "";
+  }
+}
+
+function Dashboard() {
+  if (getStoredRole() === "agent") {
+    return <AdminDashboard />;
+  }
+
+  return <UserDashboard />;
 }
 
 export default Dashboard;
