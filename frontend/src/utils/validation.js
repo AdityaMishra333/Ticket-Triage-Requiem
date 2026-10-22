@@ -4,7 +4,8 @@ export const isValidEmail = (email) => {
 };
 
 export const isValidName = (name) => {
-    return name.trim().length > 0;
+        return typeof name === "string"
+        && /^\p{L}[\p{L}\s.'-]*$/u.test(name.trim());
 };
 
 export const isValidPassword = (password) => {

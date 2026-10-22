@@ -118,7 +118,7 @@ function TrackTicket() {
                 style={{ width: "100%" }}
                 onClick={() => navigate(`/tickets/${ticket.ticketId}`)}
               >
-                View full ticket updates →
+                View full ticket updates
               </button>
             </div>
           )}

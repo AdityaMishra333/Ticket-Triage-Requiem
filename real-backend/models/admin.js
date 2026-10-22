@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const AgentDetails = new mongoose.Schema({
+const AdminDetails = new mongoose.Schema({
     name : {
         type : String,
         required : true
@@ -14,7 +14,12 @@ const AgentDetails = new mongoose.Schema({
 
     password : {
         type : String,
+    },
+
+    role : {
+        type : String,
+        default : "admin"
     }
 })
 
-module.exports = mongoose.model("Agent", AgentDetails)
+module.exports = mongoose.model("Admin", AdminDetails)

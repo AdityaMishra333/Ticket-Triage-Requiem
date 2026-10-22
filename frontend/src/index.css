@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SupportDesk — Clean, Crafted UI Stylesheet (Human-designed aesthetic)
+   Los Polos Hermanos — Clean, Crafted UI Stylesheet (Human-designed aesthetic)
    ========================================================================== */
 
 :root {
@@ -1379,3 +1379,196 @@ a:hover {
   border-color: rgba(134, 239, 172, 0.4);
   color: #bbf7d0;
 }
+
+/* ==========================================================================
+   Login page: centering + User / Admin toggle
+   ========================================================================== */
+
+/* .dashboard-bg sets display: flow-root later in the file; restore flex centering */
+.auth-page.dashboard-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.login-page .auth-card {
+  margin: 0 auto;
+}
+
+.login-mode-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Sliding white pill behind the buttons */
+.login-mode-toggle::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 12px) / 2);
+  border-radius: 7px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-login-mode .login-mode-toggle::before {
+  transform: translateX(calc(100% + 4px));
+}
+
+.login-mode-toggle button {
+  position: relative;
+  z-index: 1;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.login-mode-toggle button:hover:not(.active) {
+  color: #ffffff;
+}
+
+.login-mode-toggle button.active {
+  color: #0f172a;
+}
+
+.login-mode-toggle button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-mode-toggle::before,
+  .login-mode-toggle button {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Login page comic hero (first screen on /login and /): Gustavo Fring photo as the
+   background with the quote written over it. Only used by pages/Login.jsx.
+   The photo is public/gustavo-fring-bg.jpg (a 2400px web copy of gustavo-fring.png).
+   One fixed photo layer (.login-bg) sits behind the hero AND the login box, so the
+   framing never changes. Login.jsx sets --p (0 at the top -> 1 at the login box)
+   while scrolling: the photo is clear at 0 and blurred + darkened at 1.
+   ========================================================================== */
+.login-bg {
+  --p: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #14100a url("/gustavo-fring-bg.jpg") 56% center / cover no-repeat;
+  filter: blur(calc(var(--p) * 14px));
+  transform: scale(1.06); /* hides the soft edges that blur creates */
+  will-change: filter;
+  pointer-events: none;
+}
+
+/* Darkening that grows as you scroll to the login box (for readability of the card) */
+.login-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: var(--p);
+}
+
+/* Soft shade on the left only behind the quote; fades out while scrolling */
+.login-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.22) 38%, rgba(0, 0, 0, 0) 62%);
+  opacity: calc(1 - var(--p));
+}
+
+.login-hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow: hidden;
+  padding: 0 6vw 8vh;
+}
+
+/* Quote: left column, bottom of the screen, so it never covers his face */
+.login-hero-quote {
+  position: relative;
+  z-index: 1;
+  max-width: min(46vw, 760px);
+  margin: 0;
+  color: #fff7d6;
+  font-family: Impact, "Arial Black", "Helvetica Neue", sans-serif;
+  font-size: clamp(2.4rem, 5.6vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 0.98;
+  text-align: left;
+  text-transform: uppercase;
+  text-shadow:
+    4px 4px 0 #8f1d14,
+    -2px -2px 0 #3b0d08,
+    2px -2px 0 #3b0d08,
+    -2px 2px 0 #3b0d08,
+    2px 2px 0 #3b0d08,
+    8px 8px 0 rgba(59, 13, 8, 0.45);
+}
+
+/* Plain thin white hint text at the bottom of the hero (not a button) */
+.login-hero-scroll {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  z-index: 3;
+  margin: 0;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.55);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Login box section: transparent, so the fixed photo layer shows (instead of the forest) */
+.login-page.dashboard-bg {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Phones (portrait): quote at the bottom with a bottom shade instead of the left shade */
+@media (max-width: 760px) {
+  .login-hero { padding: 0 6vw 16vh; }
+  .login-bg::before { background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 80%); }
+  .login-bg { background-position: 54% center; }
+  .login-hero-quote { max-width: 100%; font-size: clamp(2rem, 9vw, 3.4rem); text-shadow: 3px 3px 0 #8f1d14, 5px 5px 0 rgba(59, 13, 8, 0.45); }
+}
+
+/* Text labels that replaced the icons ("Show"/"Hide", "List"/"Cards") */
+.password-toggle-btn { font-size: 12px; font-weight: 500; padding: 4px 6px; }
+.password-input-group .field-input { padding-right: 58px; }
+.view-btn { font-size: 12px; font-weight: 500; padding: 5px 10px; }

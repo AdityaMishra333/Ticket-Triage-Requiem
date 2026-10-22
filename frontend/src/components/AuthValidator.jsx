@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getTokenPayload, isAdminToken } from "../utils/auth";
 
 const UnauthRoutes = ["/login", "/register", "/"];
 
 // The backend has no profile endpoint, so validate the JWT locally (presence + exp).
 function isTokenValid(token) {
-    if (!token) return false;
-    try {
-        const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-        return !payload.exp || payload.exp * 1000 > Date.now();
-    } catch {
-        return false;
-    }
+    const payload = getTokenPayload(token);
+    return !!payload && (!payload.exp || payload.exp * 1000 > Date.now());
 }
 
 export default function AuthValidator({ children }) {
@@ -26,10 +22,16 @@ export default function AuthValidator({ children }) {
                 return;
             }
 
-            if (!isTokenValid(localStorage.getItem("token"))) {
+            const token = localStorage.getItem("token");
+
+            if (!isTokenValid(token)) {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
                 navigate("/login");
+            } else if (location.pathname.startsWith("/admin") && !isAdminToken(token)) {
+                // ADMIN ONLY pages: logged in, but not an admin -> back to the user dashboard.
+                // UI guard only; the backend adminAuth middleware enforces the role on the API.
+                navigate("/dashboard");
             }
             setIsLoading(false);
         }

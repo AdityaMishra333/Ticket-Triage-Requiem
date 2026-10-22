@@ -3,9 +3,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { isValidEmail, isValidName } from "../utils/validation";
 
+// Sign-up page for USERS only. It creates a normal user account
+// (POST /auth/create); there is no admin registration here, because the
+// admin role has to be set on the backend.
 function Register() {
   const navigate = useNavigate();
 
+  // Name, email and password are sent to the backend; confirmPassword is checked only in the browser
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,6 +21,7 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Updates the field that matches the input's name attribute (name / email / password)
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -28,10 +33,11 @@ function Register() {
     e.preventDefault();
     setMessage("");
 
+    // Client-side validation; the first failing rule is shown and the request is not sent
     const name = formData.name.trim();
     const email = formData.email.trim();
     if (!isValidName(name)) {
-      setMessage("Name is required.");
+      setMessage("Provide a valid UserName.");
       return;
     }
     if (!isValidEmail(email)) {
@@ -55,6 +61,7 @@ function Register() {
         password: formData.password
       });
 
+      // Success: go to Login with the email prefilled and a success message
       navigate("/login", {
         state: {
           email: email.toLowerCase(),
@@ -65,6 +72,7 @@ function Register() {
       console.error(error);
       const data = error.response?.data;
       const errMessage = (typeof data === "string" && data) || data?.message;
+      // 409 = email already registered, so send the user to Login instead
       if (error.response?.status === 409) {
         setMessage("This email is already registered. Please log in.");
         navigate("/login", {
@@ -85,17 +93,12 @@ function Register() {
     <div className="auth-page dashboard-bg">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="brand-icon">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
-          </div>
           <h1>Create an account</h1>
-          <p>Get started with SupportDesk to report and track issues.</p>
+          <p>Get started with Los Polos Hermanos to report and track issues.</p>
         </div>
 
         <form onSubmit={handleSubmit}>
+          {/* Name */}
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-name">
               Name
@@ -113,6 +116,7 @@ function Register() {
             />
           </div>
 
+          {/* Email */}
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-email">
               Email
@@ -130,6 +134,7 @@ function Register() {
             />
           </div>
 
+          {/* Password (with show / hide button) */}
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-password">
               Password
@@ -153,23 +158,12 @@ function Register() {
                 onClick={() => setShowPassword((v) => !v)}
                 title={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-                    <line x1="2" y1="2" x2="22" y2="22" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
+          {/* Confirm password (must match; checked in handleSubmit) */}
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-confirm">
               Confirm Password
@@ -192,19 +186,7 @@ function Register() {
                 onClick={() => setShowConfirmPassword((v) => !v)}
                 title={showConfirmPassword ? "Hide password" : "Show password"}
               >
-                {showConfirmPassword ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-                    <line x1="2" y1="2" x2="22" y2="22" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
+                {showConfirmPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
@@ -224,6 +206,7 @@ function Register() {
             {submitting ? "Creating account..." : "Create account"}
           </button>
 
+          {/* Link back to the Login page */}
           <div className="auth-footer-links">
             Already have an account?{" "}
             <button

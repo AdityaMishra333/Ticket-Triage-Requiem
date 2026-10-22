@@ -1,29 +1,62 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { validateLogin } from "../utils/validation";
 import { getTokenPayload, isAdminToken } from "../utils/auth";
 
+// Shared login page for BOTH users and admins.
+// The User / Admin toggle only changes the look and adds an admin-only check;
+// both modes call the same backend endpoint (POST /auth/login).
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Register redirects here with a prefilled email and a "Account created" message
   const [email, setEmail] = useState(location.state?.email || "");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(location.state?.message || "");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // false = User login (default), true = Admin login
   const [isAdminMode, setIsAdminMode] = useState(false);
 
+  // Background photo layer (fixed behind the whole page). While the visitor is at the top the photo is
+  // clear; as they scroll down to the login box it gradually blurs and darkens.
+  // The scroll progress (0 -> 1) is written to the CSS variable --p, which index.css uses for blur/darkness.
+  const bgRef = useRef(null);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const vh = window.innerHeight || 1;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - vh * 0.1) / (vh * 0.7)));
+      bgRef.current?.style.setProperty("--p", progress.toFixed(3));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Called by the User / Admin toggle buttons; also clears any old error message
   const switchLoginMode = (adminMode) => {
     setIsAdminMode(adminMode);
     setMessage("");
   };
 
+  // Runs for both user and admin sign in
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
+    // Client-side validation before calling the backend
     const normalizedEmail = email.trim();
     const errors = validateLogin(normalizedEmail, password);
     if (Object.keys(errors).length > 0) {
@@ -33,7 +66,7 @@ function Login() {
 
     try {
       setSubmitting(true);
-      const response = await api.post("/auth/login", {
+      const response = await api.post(isAdminMode ? "/admin/login" :"/auth/login", {
         email: normalizedEmail.toLowerCase(),
         password
       });
@@ -45,16 +78,20 @@ function Login() {
       }
 
       const role = getTokenPayload(token)?.role;
+      // ADMIN ONLY: in Admin mode, reject accounts whose token role is not admin
       if (isAdminMode && !isAdminToken(token)) {
         setMessage("This account doesn't have administrator access.");
         return;
       }
 
+      // Save the session (used later by AuthValidator and the API calls)
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify({ email: normalizedEmail.toLowerCase(), role }));
 
+      // Admin token -> admin dashboard, everyone else -> user dashboard
       navigate(isAdminToken(token) ? "/admin" : "/dashboard");
     } catch (error) {
+      // Show the backend's message if there is one, otherwise a generic error
       console.error(error);
       const data = error.response?.data;
       setMessage(
@@ -68,9 +105,25 @@ function Login() {
   };
 
   return (
-    <div className={`auth-page dashboard-bg login-page${isAdminMode ? " admin-login-mode" : ""}`}>
+    <>
+    {/* COMIC HERO (login page only, shown to users and admins): the first screen a visitor sees.
+        The quote is written over the fixed photo layer (.login-bg). */}
+    {/* Fixed photo behind everything (the Gustavo Fring photo). Clear at the top, blurred when scrolled to the login box. */}
+    <div ref={bgRef} className="login-bg" aria-hidden="true" />
+
+    <section className="login-hero" aria-label="Welcome">
+      <p className="login-hero-quote" aria-hidden="true">
+        Hello, my name is Gustavo Fring. How can I help you?
+      </p>
+      <p className="login-hero-scroll">Scroll down for login</p>
+    </section>
+
+    {/* LOGIN BOX section (existing login page): user and admin sign in, below the hero */}
+    <div id="login-box" className={`auth-page dashboard-bg login-page${isAdminMode ? " admin-login-mode" : ""}`}>
       <div className="auth-card">
+        {/* User / Admin toggle. The sliding pill is pure CSS (see .login-mode-toggle in index.css) */}
         <div className="login-mode-toggle" role="group" aria-label="Choose login type">
+          {/* USER mode button */}
           <button
             type="button"
             className={!isAdminMode ? "active" : ""}
@@ -79,6 +132,7 @@ function Login() {
           >
             User
           </button>
+          {/* ADMIN mode button */}
           <button
             type="button"
             className={isAdminMode ? "active" : ""}
@@ -88,21 +142,9 @@ function Login() {
             Admin
           </button>
         </div>
+        {/* Header: icon, title and subtitle change depending on the mode */}
         <div className="auth-header">
-          <div className="brand-icon">
-            {isAdminMode ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-            ) : (
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            )}
-          </div>
-          <h1>{isAdminMode ? "Admin sign in" : "Sign in to AI TicketTriage"}</h1>
+          <h1>{isAdminMode ? "Admin sign in" : "Sign in to Los Polos Hermanos"}</h1>
           <p>
             {isAdminMode
               ? "Use your administrator credentials to continue."
@@ -150,29 +192,19 @@ function Login() {
                 onClick={() => setShowPassword((v) => !v)}
                 title={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-                    <line x1="2" y1="2" x2="22" y2="22" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
+          {/* Error / info message (validation, wrong password, not an admin, ...) */}
           {message && (
             <div className="form-feedback error" role="alert" style={{ marginBottom: "16px" }}>
               <span>{message}</span>
             </div>
           )}
 
+          {/* Submit button label: ADMIN -> "Admin sign in", USER -> "Sign in" */}
           <button
             type="submit"
             className="btn-primary"
@@ -182,20 +214,20 @@ function Login() {
             {submitting ? "Signing in..." : isAdminMode ? "Admin sign in" : "Sign in"}
           </button>
 
-          {!isAdminMode && (
-            <div className="auth-footer-links">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={() => navigate("/register")}
-              >
-                Sign up
-              </button>
-            </div>
-          )}
+          {/* Shown in both modes; goes to the Register page (creates a normal user account) */}
+          <div className="auth-footer-links">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/register")}
+            >
+              Sign up
+            </button>
+          </div>
         </form>
       </div>
     </div>
+    </>
   );
 }
 

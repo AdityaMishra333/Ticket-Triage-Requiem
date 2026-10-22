@@ -253,3 +253,527 @@
   .admin-status-tabs { width: 100%; gap: 12px; }
   .admin-detail-aside { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   High-contrast colour overrides (colours only: no layout, size or behaviour changes).
+   Keep this block last so it wins over the lighter colours above.
+   ========================================================================== */
+.admin-shell {
+  --admin-ink: #0f172a;
+  --admin-muted: #475569;
+  --admin-line: #cbd5e1;
+  background: #eef1f6;
+}
+
+/* Sidebar */
+.admin-sidebar { border-right-color: #cbd5e1; }
+.admin-brand,.admin-brand:hover { color: #0f172a; }
+.admin-brand-mark { background: #3b5bdb; }
+.admin-brand-period { color: #3b5bdb; }
+.admin-workspace { border-color: #cbd5e1; }
+.admin-workspace-icon { background: #dbe4ff; color: #2b44b3; }
+.admin-workspace small,.admin-sidebar-footer small { color: #475569; }
+.admin-workspace-chevron { color: #475569; }
+.admin-nav-label { color: #475569; }
+.admin-nav-item { color: #1e293b; }
+.admin-nav-item > span:first-child { color: #475569; }
+.admin-nav-item.active { background: #dbe4ff; color: #1e3a9f; }
+.admin-nav-item.active > span:first-child { color: #2b44b3; }
+.admin-nav-item:hover,.admin-nav-item.selected { background: #e5ebff; color: #1e3a9f; }
+.admin-nav-count { color: #334155; }
+.department-nav-dot { background: #3b5bdb; }
+.admin-sidebar-footer { border-top-color: #cbd5e1; }
+.admin-avatar,.admin-top-avatar { background: #dbe4ff; color: #1e3a9f; }
+.admin-sidebar-footer > button { color: #334155; }
+
+/* Top bar and headings */
+.admin-topbar { border-bottom-color: #cbd5e1; }
+.admin-breadcrumb { color: #334155; }
+.admin-breadcrumb span { color: #64748b; }
+.admin-breadcrumb strong { color: #0f172a; }
+.admin-breadcrumb button { color: #1e3a9f; }
+.admin-sample-pill { border-color: #e0a526; background: #fff3cd; color: #6b4a00; }
+.admin-sample-pill > span { background: #c98500; }
+.admin-eyebrow { color: #475569; }
+.admin-page-heading h1,.admin-detail-heading h1 { color: #0f172a; }
+.admin-subtitle,.admin-detail-heading p { color: #334155; }
+.admin-export-button,.admin-filter-button { border-color: #94a3b8; color: #1e293b; }
+.admin-export-button:hover,.admin-filter-button:hover { border-color: #64748b; background: #e5ebff; }
+.admin-export-button > span { color: #2b44b3; }
+.admin-demo-notice { border-color: #a5b4fc; background: #e5ebff; color: #1e3a9f; }
+.admin-demo-notice strong { color: #1e3a9f; }
+.admin-demo-notice div > span { color: #334155; }
+
+/* Cards and panels */
+.admin-stat-card,.admin-panel { border-color: #cbd5e1; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
+.admin-stat-top { color: #334155; }
+.admin-stat-icon.blue { background: #dbe4ff; color: #2b44b3; }
+.admin-stat-icon.amber { background: #ffe8b3; color: #8a5a00; }
+.admin-stat-icon.violet { background: #e9dcff; color: #5b2fb3; }
+.admin-stat-icon.green { background: #c9f0dc; color: #0d6b3f; }
+.admin-stat-card > strong { color: #0f172a; }
+.admin-stat-card > small { color: #475569; }
+.admin-stat-foot { border-top-color: #cbd5e1; color: #475569; }
+.stat-trend { color: #0d7a4a; }
+.amber-dot { background: #c98500; }.violet-dot { background: #6d3fd1; }.green-dot { background: #0d7a4a; }
+.admin-panel-heading h2 { color: #0f172a; }
+.admin-panel-heading p { color: #475569; }
+.admin-panel-menu { color: #475569; }
+
+/* Department chart */
+.department-chart-row { color: #1e293b; }
+.department-icon-1 { background: #dbe4ff; color: #2b44b3; }
+.department-icon-2 { background: #c9f0dc; color: #0d6b3f; }
+.department-icon-3 { background: #ffe0c2; color: #8a4a0a; }
+.department-icon-4 { background: #e9dcff; color: #5b2fb3; }
+.department-icon-5 { background: #c7ecf3; color: #0b5f73; }
+.department-bar-wrap { background: #cbd5e1; }
+.department-bar-wrap > span { background: #3b5bdb; }
+.department-chart-row:nth-child(2) .department-bar-wrap > span { background: #1f9d63; }
+.department-chart-row:nth-child(3) .department-bar-wrap > span { background: #e07b17; }
+.department-chart-row:nth-child(4) .department-bar-wrap > span { background: #7a4be0; }
+.department-chart-row:nth-child(5) .department-bar-wrap > span { background: #1a9bb5; }
+.department-chart-row > strong { color: #0f172a; }
+.admin-text-link { color: #1e3a9f; }
+
+/* Waiting for a reply */
+.attention-count { background: #ffe8b3; color: #6b4a00; }
+.attention-ticket { border-bottom-color: #cbd5e1; }
+.attention-ticket-icon,.requester-cell > span { background: #dbe4ff; color: #1e3a9f; }
+.attention-ticket-info strong { color: #0f172a; }
+.attention-ticket-info small { color: #475569; }
+.attention-arrow { color: #475569; }
+
+/* Priority colours (also covers the "Medium" value used by the sample data) */
+.priority-dot { background: #64748b; }
+.priority-high { background: #d62828; }
+.priority-medium,.priority-normal { background: #e08a00; }
+.priority-low { background: #1f9d63; }
+.priority-text-high { color: #b01e1e !important; }
+.priority-text-medium,.priority-text-normal { color: #8a5a00 !important; }
+.priority-text-low { color: #0d6b3f !important; }
+
+/* Ticket table */
+.ticket-total-chip { background: #dbe4ff; color: #1e3a9f; }
+.admin-ticket-controls { border-bottom-color: #cbd5e1; }
+.admin-status-tabs button { color: #334155; }
+.admin-status-tabs button.active { color: #1e3a9f; }
+.admin-status-tabs button.active::after { background: #3b5bdb; }
+.admin-status-tabs button > span { background: #dde3ec; color: #1e293b; }
+.admin-status-tabs button.active > span { background: #dbe4ff; color: #1e3a9f; }
+.admin-search { border-color: #94a3b8; background: #fff; color: #475569; }
+.admin-search input { color: #0f172a; }
+.admin-search input::placeholder { color: #64748b; }
+.admin-ticket-filters select { border-color: #94a3b8; color: #0f172a; }
+.admin-ticket-table thead { background: #e2e8f0; }
+.admin-ticket-table th { color: #334155; }
+.admin-ticket-table td { border-top-color: #cbd5e1; color: #1e293b; }
+.admin-ticket-table tbody tr:hover { background: #e5ebff; }
+.admin-ticket-table td:first-child strong { color: #0f172a; }
+.admin-ticket-table td:first-child small { color: #475569; }
+.requester-cell { color: #1e293b; }
+.department-cell i,.department-info-dot { background: #3b5bdb; }
+.submitted-cell { color: #334155 !important; }
+.table-arrow { color: #475569 !important; }
+.admin-no-results { color: #334155; }
+.admin-table-footer { border-top-color: #cbd5e1; color: #334155; }
+.admin-table-footer strong { color: #0f172a; }
+.admin-page-footer { color: #475569; }
+.admin-page-footer span { color: #64748b; }
+
+/* Status badges */
+.admin-status-submitted { border-color: #7fb4e6; background: #d6eafb; color: #0b4a85; }
+.admin-status-assigned { border-color: #b7a2ec; background: #e6defa; color: #4a2a9e; }
+.admin-status-in_progress { border-color: #e6b94d; background: #ffeab8; color: #6b4a00; }
+.admin-status-resolved { border-color: #6fc79a; background: #cdf1dd; color: #0b5c37; }
+.admin-status-closed { border-color: #94a3b8; background: #dde3ec; color: #1e293b; }
+
+/* Ticket details page */
+.admin-back-link { color: #1e3a9f; }
+.admin-back-link:hover { color: #0f2a80; }
+.admin-detail-id { color: #334155; }
+.admin-detail-description > p { color: #1e293b; }
+.tracking-live-dot { color: #6b4a00; }
+.admin-timeline-event:not(:last-child)::before { border-left-color: #94a3b8; }
+.admin-timeline-marker { border-color: #94a3b8; }
+.admin-timeline-marker.current { border-color: #3b5bdb; background: #3b5bdb; }
+.admin-timeline-event-title > strong { color: #0f172a; }
+.admin-timeline-event-body > p { color: #334155; }
+.admin-timeline-event-body > time { color: #475569; }
+.admin-information-panel .admin-panel-heading,.admin-requester-panel .admin-panel-heading { border-bottom-color: #cbd5e1; }
+.admin-info-field { border-bottom-color: #dde3ec; }
+.admin-info-field > span { color: #475569; }
+.admin-info-field > strong { color: #0f172a; }
+.admin-requester > span { background: #dbe4ff; color: #1e3a9f; }
+.admin-requester strong { color: #0f172a; }
+.admin-requester small { color: #475569; }
+.admin-ai-note { border-color: #a5b4fc; background: #e5ebff; color: #1e3a9f; }
+.admin-ai-note > span { color: #2b44b3; }
+.admin-ai-note strong { color: #1e3a9f; }
+.admin-ai-note p { color: #334155; }
+.admin-ai-note b { color: #1e3a9f; }
+.admin-not-found { border-color: #cbd5e1; }
+.admin-not-found > span { background: #dbe4ff; color: #2b44b3; }
+.admin-not-found p { color: #334155; }
+
+/* Top bar "Sign out" button (matches the user dashboard's Sign out) */
+.admin-signout-button { height: 30px; padding: 0 14px; border: 1px solid #94a3b8; border-radius: 7px; background: #fff; color: #1e293b; font-size: 12px; font-weight: 600; transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.admin-signout-button:hover { border-color: #b01e1e; background: #fdecec; color: #b01e1e; }
+.admin-signout-button:focus-visible { outline: 2px solid #3b5bdb; outline-offset: 2px; }
+
+/* ==========================================================================
+   Glass theme: makes the admin pages match the user dashboard (.dashboard-bg).
+   Colours / backgrounds / blur only: no markup, layout, size or position changes.
+   Keep this block last so it wins over the earlier colour rules.
+   ========================================================================== */
+.admin-shell {
+  --admin-ink: #ffffff;
+  --admin-muted: rgba(255, 255, 255, 0.7);
+  --admin-line: rgba(255, 255, 255, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.045);
+  --glass-blur: blur(14px) saturate(140%);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  color-scheme: dark;
+  background:
+    linear-gradient(rgba(6, 18, 12, 0.55), rgba(6, 18, 12, 0.7)),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=70") center / cover fixed no-repeat;
+  background-color: #0b1a12;
+}
+
+/* Glass surfaces (same recipe as the user dashboard) */
+.admin-sidebar,
+.admin-topbar,
+.admin-stat-card,
+.admin-panel,
+.admin-not-found,
+.admin-ai-note {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.admin-stat-card,.admin-panel,.admin-not-found { border-color: var(--admin-line); box-shadow: var(--glass-shadow); }
+.admin-sidebar { border-right-color: var(--admin-line); }
+.admin-topbar { border-bottom-color: var(--admin-line); }
+
+/* Sidebar */
+.admin-brand,.admin-brand:hover { color: #ffffff; }
+.admin-brand-mark { background: rgba(255, 255, 255, 0.92); color: #0f172a; }
+.admin-brand-period { color: #86efac; }
+.admin-workspace { border-color: var(--admin-line); background: rgba(255, 255, 255, 0.06); }
+.admin-workspace-icon { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+.admin-workspace small,.admin-sidebar-footer small { color: rgba(255, 255, 255, 0.7); }
+.admin-workspace-chevron { color: rgba(255, 255, 255, 0.7); }
+.admin-nav-label { color: rgba(255, 255, 255, 0.6); }
+.admin-nav-item { color: rgba(255, 255, 255, 0.85); }
+.admin-nav-item > span:first-child { color: rgba(255, 255, 255, 0.7); }
+.admin-nav-item.active { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
+.admin-nav-item.active > span:first-child { color: #ffffff; }
+.admin-nav-item:hover,.admin-nav-item.selected { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+.admin-nav-count { color: rgba(255, 255, 255, 0.8); }
+.department-nav-dot { background: #86efac; }
+.admin-sidebar-footer { border-top-color: var(--admin-line); }
+.admin-avatar,.admin-top-avatar { border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+.admin-sidebar-footer > button { color: rgba(255, 255, 255, 0.8); }
+.admin-sidebar-footer > button:hover { color: #fecaca; }
+
+/* Top bar */
+.admin-breadcrumb { color: rgba(255, 255, 255, 0.75); }
+.admin-breadcrumb span { color: rgba(255, 255, 255, 0.45); }
+.admin-breadcrumb strong { color: #ffffff; }
+.admin-breadcrumb button { color: rgba(255, 255, 255, 0.85); }
+.admin-sample-pill { border-color: rgba(252, 211, 77, 0.45); background: rgba(245, 158, 11, 0.18); color: #fde68a; }
+.admin-sample-pill > span { background: #fbbf24; }
+.admin-signout-button { border-color: rgba(255, 255, 255, 0.32); background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+.admin-signout-button:hover { border-color: rgba(252, 165, 165, 0.5); background: rgba(239, 68, 68, 0.25); color: #fecaca; }
+.admin-signout-button:focus-visible { outline-color: rgba(255, 255, 255, 0.8); }
+
+/* Headings and buttons */
+.admin-eyebrow { color: rgba(255, 255, 255, 0.65); }
+.admin-page-heading h1,.admin-detail-heading h1 { color: #ffffff; }
+.admin-subtitle,.admin-detail-heading p { color: rgba(255, 255, 255, 0.8); }
+.admin-export-button,.admin-filter-button { border-color: rgba(255, 255, 255, 0.32); background: rgba(255, 255, 255, 0.1); box-shadow: none; color: #ffffff; }
+.admin-export-button:hover,.admin-filter-button:hover { border-color: rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.2); }
+.admin-export-button > span { color: #ffffff; }
+.admin-demo-notice { border-color: var(--admin-line); background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+.admin-demo-notice strong { color: #ffffff; }
+.admin-demo-notice div > span { color: rgba(255, 255, 255, 0.8); }
+
+/* Stat cards and panel headings */
+.admin-stat-top { color: rgba(255, 255, 255, 0.8); }
+.admin-stat-icon.blue { background: rgba(147, 197, 253, 0.22); color: #bfdbfe; }
+.admin-stat-icon.amber { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
+.admin-stat-icon.violet { background: rgba(196, 181, 253, 0.22); color: #ddd6fe; }
+.admin-stat-icon.green { background: rgba(134, 239, 172, 0.22); color: #bbf7d0; }
+.admin-stat-card > strong { color: #ffffff; }
+.admin-stat-card > small { color: rgba(255, 255, 255, 0.7); }
+.admin-stat-foot { border-top-color: var(--admin-line); color: rgba(255, 255, 255, 0.7); }
+.stat-trend { color: #86efac; }
+.amber-dot { background: #fbbf24; }.violet-dot { background: #c4b5fd; }.green-dot { background: #86efac; }
+.admin-panel-heading h2 { color: #ffffff; }
+.admin-panel-heading p { color: rgba(255, 255, 255, 0.7); }
+.admin-panel-menu { color: rgba(255, 255, 255, 0.7); }
+
+/* Department chart */
+.department-chart-row { color: rgba(255, 255, 255, 0.9); }
+.department-icon-1 { background: rgba(147, 197, 253, 0.22); color: #bfdbfe; }
+.department-icon-2 { background: rgba(134, 239, 172, 0.22); color: #bbf7d0; }
+.department-icon-3 { background: rgba(253, 186, 116, 0.22); color: #fed7aa; }
+.department-icon-4 { background: rgba(196, 181, 253, 0.22); color: #ddd6fe; }
+.department-icon-5 { background: rgba(103, 232, 249, 0.22); color: #a5f3fc; }
+.department-bar-wrap { background: rgba(255, 255, 255, 0.15); }
+.department-bar-wrap > span { background: #93c5fd; }
+.department-chart-row:nth-child(2) .department-bar-wrap > span { background: #86efac; }
+.department-chart-row:nth-child(3) .department-bar-wrap > span { background: #fdba74; }
+.department-chart-row:nth-child(4) .department-bar-wrap > span { background: #c4b5fd; }
+.department-chart-row:nth-child(5) .department-bar-wrap > span { background: #67e8f9; }
+.department-chart-row > strong { color: #ffffff; }
+.admin-text-link { color: #ffffff; }
+
+/* Waiting for a reply */
+.attention-count { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
+.attention-ticket { border-bottom-color: var(--admin-line); }
+.attention-ticket:hover { background: rgba(255, 255, 255, 0.08); }
+.attention-ticket-icon,.requester-cell > span { border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+.attention-ticket-info strong { color: #ffffff; }
+.attention-ticket-info small { color: rgba(255, 255, 255, 0.7); }
+.attention-arrow { color: rgba(255, 255, 255, 0.7); }
+
+/* Priority */
+.priority-dot { background: rgba(255, 255, 255, 0.55); }
+.priority-high { background: #f87171; }
+.priority-medium,.priority-normal { background: #fbbf24; }
+.priority-low { background: #4ade80; }
+.priority-text-high { color: #fca5a5 !important; }
+.priority-text-medium,.priority-text-normal { color: #fde68a !important; }
+.priority-text-low { color: #86efac !important; }
+
+/* Ticket table */
+.ticket-total-chip { background: rgba(255, 255, 255, 0.18); color: #ffffff; }
+.admin-ticket-controls { border-bottom-color: var(--admin-line); }
+.admin-status-tabs button { color: rgba(255, 255, 255, 0.75); }
+.admin-status-tabs button.active { color: #ffffff; }
+.admin-status-tabs button.active::after { background: #ffffff; }
+.admin-status-tabs button > span { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
+.admin-status-tabs button.active > span { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+.admin-search { border-color: var(--admin-line); background: var(--glass-bg); color: rgba(255, 255, 255, 0.7); }
+.admin-search input { color: #ffffff; }
+.admin-search input::placeholder { color: rgba(255, 255, 255, 0.6); }
+.admin-ticket-filters select { border-color: var(--admin-line); background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+.admin-ticket-filters select option { background: #14231b; color: #ffffff; }
+.admin-ticket-table thead { background: rgba(255, 255, 255, 0.08); }
+.admin-ticket-table th { color: rgba(255, 255, 255, 0.75); }
+.admin-ticket-table td { border-top-color: var(--admin-line); color: rgba(255, 255, 255, 0.9); }
+.admin-ticket-table tbody tr:hover { background: rgba(255, 255, 255, 0.12); }
+.admin-ticket-table td:first-child strong { color: #ffffff; }
+.admin-ticket-table td:first-child small { color: rgba(255, 255, 255, 0.65); }
+.requester-cell { color: rgba(255, 255, 255, 0.9); }
+.department-cell i,.department-info-dot { background: #86efac; }
+.submitted-cell { color: rgba(255, 255, 255, 0.8) !important; }
+.table-arrow { color: rgba(255, 255, 255, 0.7) !important; }
+.admin-no-results { color: rgba(255, 255, 255, 0.8); }
+.admin-table-footer { border-top-color: var(--admin-line); color: rgba(255, 255, 255, 0.75); }
+.admin-table-footer strong { color: #ffffff; }
+.admin-page-footer { color: rgba(255, 255, 255, 0.65); }
+.admin-page-footer span { color: rgba(255, 255, 255, 0.45); }
+
+/* Status badges: same pastel colours as the user dashboard's .status-badge */
+.admin-status-submitted { border-color: var(--status-submitted-border); background: var(--status-submitted-bg); color: var(--status-submitted-text); }
+.admin-status-assigned { border-color: var(--status-assigned-border); background: var(--status-assigned-bg); color: var(--status-assigned-text); }
+.admin-status-in_progress { border-color: var(--status-progress-border); background: var(--status-progress-bg); color: var(--status-progress-text); }
+.admin-status-resolved { border-color: var(--status-resolved-border); background: var(--status-resolved-bg); color: var(--status-resolved-text); }
+.admin-status-closed { border-color: var(--status-closed-border); background: var(--status-closed-bg); color: var(--status-closed-text); }
+
+/* Ticket details page */
+.admin-back-link { color: rgba(255, 255, 255, 0.85); }
+.admin-back-link:hover { color: #ffffff; }
+.admin-detail-id { color: rgba(255, 255, 255, 0.75); }
+.admin-detail-description > p { color: rgba(255, 255, 255, 0.9); }
+.tracking-live-dot { color: #fde68a; }
+.admin-timeline-event:not(:last-child)::before { border-left-color: rgba(255, 255, 255, 0.3); }
+.admin-timeline-marker { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.15); }
+.admin-timeline-marker.current { border-color: rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.9); color: #0f172a; }
+.admin-timeline-event-title > strong { color: #ffffff; }
+.admin-timeline-event-body > p { color: rgba(255, 255, 255, 0.8); }
+.admin-timeline-event-body > time { color: rgba(255, 255, 255, 0.65); }
+.admin-information-panel .admin-panel-heading,.admin-requester-panel .admin-panel-heading { border-bottom-color: var(--admin-line); }
+.admin-info-field { border-bottom-color: var(--admin-line); }
+.admin-info-field > span { color: rgba(255, 255, 255, 0.7); }
+.admin-info-field > strong { color: #ffffff; }
+.admin-requester > span { border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+.admin-requester strong { color: #ffffff; }
+.admin-requester small { color: rgba(255, 255, 255, 0.7); }
+.admin-ai-note { border-color: var(--admin-line); box-shadow: var(--glass-shadow); color: #ffffff; }
+.admin-ai-note > span { color: #86efac; }
+.admin-ai-note strong { color: #ffffff; }
+.admin-ai-note p { color: rgba(255, 255, 255, 0.8); }
+.admin-ai-note b { color: #ffffff; }
+.admin-not-found > span { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+.admin-not-found h1 { color: #ffffff; }
+.admin-not-found p { color: rgba(255, 255, 255, 0.8); }
+
+/* ==========================================================================
+   Admin background: mountain peaks at sunset, natural colours (admin pages only).
+   Keep this block last so it wins over the forest background above.
+   ========================================================================== */
+.admin-shell {
+  background:
+    /* neutral dark veil (no colour tint) so the glass panels and white text stay readable */
+    linear-gradient(rgba(8, 10, 14, 0.4), rgba(8, 10, 14, 0.62)),
+    url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=70") center / cover fixed no-repeat;
+  background-color: #0d1117;
+}
+
+/* Longer brand name ("Los Polos Hermanos"): keep it on one line inside the sidebar */
+.admin-brand { font-size: 15px; letter-spacing: -.4px; white-space: nowrap; }
+
+/* ==========================================================================
+   Admin sizes: scaled up to match the user dashboard (body ~13-14px, titles ~24-28px).
+   Sizes only (fonts, row heights, icon/avatar boxes): no element or position changes.
+   Rules that the small-screen media queries above also set (they hide text on narrow
+   screens) are wrapped in min-width queries, so those collapsed layouts keep working.
+   Keep this block last.
+   ========================================================================== */
+.admin-shell { font-size: 14px; }
+
+/* Sidebar */
+.admin-brand-mark { width: 32px; height: 32px; font-size: 17px; }
+.admin-workspace-icon { width: 34px; height: 34px; font-size: 14px; }
+.admin-workspace strong,.admin-sidebar-footer strong { font-size: 13px; }
+.admin-workspace small,.admin-sidebar-footer small { font-size: 12px; }
+.admin-nav-label { font-size: 11px; }
+.admin-nav-item > span:first-child { width: 18px; font-size: 16px; }
+.admin-nav-count { font-size: 12px; }
+.department-nav-dot { width: 8px; height: 8px; }
+.admin-avatar,.admin-top-avatar { width: 34px; height: 34px; font-size: 12px; }
+.admin-top-avatar { width: 32px; height: 32px; }
+.admin-sidebar-footer > button { font-size: 18px; }
+@media (min-width: 761px) {
+  .admin-nav-item { min-height: 40px; font-size: 13.5px; }
+}
+
+/* Top bar */
+.admin-topbar { height: 64px; }
+.admin-breadcrumb,.admin-breadcrumb button { font-size: 13px; }
+.admin-signout-button { height: 34px; font-size: 13px; }
+@media (min-width: 481px) {
+  .admin-sample-pill { font-size: 12px; }
+}
+.admin-sample-pill > span { width: 7px; height: 7px; }
+
+/* Page heading and buttons */
+.admin-subtitle,.admin-detail-heading p { font-size: 14px; }
+.admin-export-button,.admin-filter-button { height: 38px; font-size: 13px; }
+.admin-export-button > span { font-size: 18px; }
+.admin-filter-button { height: 32px; font-size: 12.5px; }
+.admin-demo-notice > span { font-size: 16px; }
+.admin-demo-notice strong { font-size: 13px; }
+.admin-demo-notice div > span { font-size: 12.5px; }
+@media (min-width: 481px) {
+  .admin-eyebrow { font-size: 11px; }
+}
+
+/* Stat cards and panel headings */
+.admin-stat-top { font-size: 13px; }
+.admin-stat-icon { width: 30px; height: 30px; font-size: 15px; }
+.admin-stat-card > strong { font-size: 28px; }
+.admin-stat-card > small { font-size: 12.5px; }
+.admin-stat-foot { font-size: 12px; }
+.stat-trend { font-size: 14px; }
+.stat-dot { width: 7px; height: 7px; }
+@media (min-width: 761px) {
+  .admin-stat-card { min-height: 156px; }
+}
+.admin-panel-heading h2 { font-size: 15px; }
+.admin-panel-heading p { font-size: 12.5px; }
+.admin-panel-menu { font-size: 16px; }
+
+/* Department chart */
+.department-chart { gap: 12px; }
+.department-chart-row { grid-template-columns: 30px 130px minmax(50px, 1fr) 24px; gap: 12px; }
+.department-chart-icon { width: 28px; height: 28px; font-size: 10.5px; }
+.department-chart-name { font-size: 13px; }
+.department-bar-wrap { height: 7px; }
+.department-chart-row > strong { font-size: 13px; }
+.admin-text-link { font-size: 12.5px; }
+
+/* Waiting for a reply */
+.attention-count { min-width: 26px; height: 26px; font-size: 12px; }
+.attention-ticket { gap: 12px; padding: 12px 0; }
+.attention-ticket-icon,.requester-cell > span { width: 36px; height: 36px; font-size: 11px; }
+.attention-ticket-info strong { font-size: 13.5px; }
+.attention-ticket-info small { font-size: 11.5px; }
+.attention-arrow { font-size: 20px; }
+.priority-dot { width: 8px; height: 8px; }
+
+/* Ticket table */
+.ticket-total-chip { min-width: 24px; height: 21px; font-size: 12px; }
+.admin-status-tabs { gap: 20px; }
+.admin-status-tabs button { height: 40px; gap: 7px; font-size: 13px; }
+.admin-status-tabs button > span { min-width: 22px; height: 20px; font-size: 11px; }
+.admin-search { width: 240px; height: 36px; gap: 7px; padding: 0 11px; }
+.admin-search > span { font-size: 18px; }
+.admin-search input { font-size: 13px; }
+.admin-ticket-filters select { height: 36px; padding: 0 9px; font-size: 13px; }
+@media (min-width: 481px) {
+  .admin-ticket-filters select { max-width: 180px; }
+}
+.admin-ticket-table th { height: 40px; font-size: 11px; }
+.admin-ticket-table td { height: 62px; font-size: 13px; }
+.admin-ticket-table td:first-child strong { max-width: 300px; font-size: 13.5px; }
+.admin-ticket-table td:first-child small { font-size: 11.5px; }
+.requester-cell { gap: 9px; }
+.requester-cell > span { width: 30px; height: 30px; font-size: 10px; }
+.department-cell i,.department-info-dot { width: 8px; height: 8px; }
+.admin-status { padding: 4px 10px; font-size: 12px; }
+.admin-status > i { width: 6px; height: 6px; }
+.table-arrow { font-size: 20px !important; }
+.admin-no-results { font-size: 14px; }
+.admin-table-footer { font-size: 12px; }
+.admin-page-footer { font-size: 12px; }
+
+/* Ticket details page */
+.admin-back-link { font-size: 14px; }
+.admin-detail-id { font-size: 13px; }
+.admin-detail-heading > .admin-status { font-size: 13px; }
+.admin-detail-description > p { font-size: 14px; }
+.tracking-live-dot { font-size: 12px; }
+.admin-timeline-event { min-height: 90px; gap: 14px; }
+.admin-timeline-event:not(:last-child)::before { top: 22px; left: 10px; }
+.admin-timeline-marker { width: 22px; height: 22px; font-size: 12px; }
+.admin-timeline-event-title { gap: 10px; }
+.admin-timeline-event-title > strong { font-size: 14px; }
+.admin-status-small { padding: 3px 8px; font-size: 11px; }
+.admin-timeline-event-body > p { font-size: 13px; }
+.admin-timeline-event-body > time { font-size: 12px; }
+.admin-info-field > span { font-size: 12px; }
+.admin-info-field > strong { font-size: 14px; }
+.ticket-id-copy { font-size: 12.5px !important; }
+.admin-requester { gap: 12px; }
+.admin-requester > span { width: 40px; height: 40px; font-size: 13px; }
+.admin-requester strong { font-size: 14px; }
+.admin-requester small { font-size: 12px; }
+.admin-ai-note { padding: 14px; }
+.admin-ai-note strong { font-size: 13px; }
+.admin-ai-note p { font-size: 13px; }
+.admin-not-found { font-size: 14px; }
+
+/* ==========================================================================
+   Tickets by department: plain list, same look as "Waiting for a reply"
+   (name and count). No icons or bars.
+   Keep this block last.
+   ========================================================================== */
+.department-chart { gap: 0; margin: 12px 0 8px; }
+.department-chart-row,
+.department-chart-row:hover { grid-template-columns: 1fr 28px; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--admin-line); color: #ffffff; }
+.department-chart-row:last-child { border-bottom: 0; }
+.department-chart-name { color: #ffffff; font-size: 13.5px; font-weight: 600; }
+.department-chart-row > strong { color: #ffffff; font-size: 13.5px; }
+
+/* All tickets table: neutral colors, no dots */
+.admin-ticket-table .department-cell i,
+.admin-ticket-table .priority-label .priority-dot,
+.admin-ticket-table .admin-status > i { display: none; }
+.admin-ticket-table .priority-label[class*="priority-text-"] { color: rgba(255, 255, 255, 0.9) !important; }
+.admin-ticket-table .admin-status { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+.admin-ticket-panel .requester-cell > span { background: rgba(255, 255, 255, 0.2); color: #ffffff; }

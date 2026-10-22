@@ -1,11 +1,16 @@
 const router = require("express").Router();
 const axios = require("axios");
-const Ticket = require("../models/ticket");const auth = require("../middleware/auth");
+const Ticket = require("../models/ticket");
+const auth = require("../middleware/auth");
+const adminAuth = require("../middleware/adminAuth");
 
 router.post("/", auth, async (req, res) => {
   try {
     const ticketId = "TKT-" + Date.now().toString(36).toUpperCase();
-    const ticket = await Ticket.create({ ...req.body, ticketId, user: req.user?.id });
+    const ticket = await Ticket.create({
+       ...req.body, ticketId, user: req.user?.id, 
+       statusHistory: [{ status: "submitted", 
+        note: "Ticket submitted", actor: "customer" }] });
 
     try {
       await axios.post(process.env.N8N_WEBHOOK_URL, {
@@ -38,6 +43,15 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+router.get("/admin/all", adminAuth, async (req, res) => {
+  try {
+    const tickets = await Ticket.find().sort({ createdAt: -1 });
+    res.json({ tickets });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch tickets" });
+  }
+});
+
 router.get("/track/:ticketId", auth, async (req, res) => {
   try {
     const ticket = await Ticket.findOne({ ticketId: req.params.ticketId.toUpperCase(), user: req.user.id });
@@ -45,6 +59,20 @@ router.get("/track/:ticketId", auth, async (req, res) => {
     res.json(ticket);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch ticket" });
+  }
+});
+
+router.get("/admin/:ticketId", adminAuth, async (req, res) => {
+  try {
+    const ticket = await Ticket.findOne({ ticketId: req.params.ticketId.toUpperCase() });
+    if (!ticket) 
+      return res.status(404).json({ message: "Ticket not found" });
+    
+    res.json(ticket);
+  } catch (err) {
+
+    res.status(500).json({ message: "Failed to fetch ticket" });
+
   }
 });
 
