@@ -111,7 +111,7 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard dashboard-bg">
       <Navbar />
 
       <main className="dashboard-page">

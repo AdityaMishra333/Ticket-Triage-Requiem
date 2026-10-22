@@ -50,12 +50,12 @@ function AdminTicketDetails() {
   }, [ticketId, navigate]);
 
   if (loading) {
-    return <main className="admin-shell admin-detail-shell">Loading ticket…</main>;
+    return <main className="admin-shell admin-detail-shell dashboard-bg">Loading ticket…</main>;
   }
 
   if (!ticket || errorMessage) {
     return (
-      <main className="admin-shell admin-detail-shell">
+      <main className="admin-shell admin-detail-shell dashboard-bg">
         <div className="admin-not-found">
           <span>?</span>
           <h1>{errorMessage ? "Unable to load ticket" : "Ticket not found"}</h1>
@@ -71,7 +71,7 @@ function AdminTicketDetails() {
   const statusHistory = ticket.statusHistory || [];
 
   return (
-    <div className="admin-shell">
+    <div className="admin-shell dashboard-bg">
       <aside className="admin-sidebar">
         <button className="admin-brand" onClick={() => navigate("/admin")}><span className="admin-brand-mark">S</span><span>supportdesk<span className="admin-brand-period">.</span></span></button>
         <div className="admin-workspace"><span className="admin-workspace-icon">A</span><span><strong>Support team</strong><small>Admin</small></span><span className="admin-workspace-chevron">⌄</span></div>

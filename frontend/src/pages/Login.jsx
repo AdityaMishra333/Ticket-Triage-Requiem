@@ -68,7 +68,7 @@ function Login() {
   };
 
   return (
-    <div className={`auth-page${isAdminMode ? " auth-page--admin" : ""}`}>
+    <div className={`auth-page login-page dashboard-bg${isAdminMode ? " auth-page--admin" : ""}`}>
       <div className="auth-card">
         <div className="auth-mode-switch" role="group" aria-label="Login type">
           <button

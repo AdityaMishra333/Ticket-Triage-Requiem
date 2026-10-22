@@ -10,6 +10,11 @@
   font-size: 13px;
 }
 
+.admin-shell.dashboard-bg {
+  background: var(--page-background);
+  background-color: #0b1a12;
+}
+
 .admin-sidebar {
   display: flex;
   width: 244px;
@@ -25,7 +30,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 10px;
-  color: #263247;
+  color: #0f172a;
   font-size: 17px;
   font-weight: 750;
   letter-spacing: -.7px;
