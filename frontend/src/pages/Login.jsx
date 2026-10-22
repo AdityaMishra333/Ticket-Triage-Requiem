@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { validateLogin } from "../utils/validation";
+import { getTokenPayload, isAdminToken } from "../utils/auth";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,7 +13,12 @@ function Login() {
   const [message, setMessage] = useState(location.state?.message || "");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
+  const switchLoginMode = (adminMode) => {
+    setIsAdminMode(adminMode);
+    setMessage("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,10 +44,16 @@ function Login() {
         return;
       }
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify({ email: normalizedEmail.toLowerCase() }));
+      const role = getTokenPayload(token)?.role;
+      if (isAdminMode && !isAdminToken(token)) {
+        setMessage("This account doesn't have administrator access.");
+        return;
+      }
 
-      navigate("/dashboard");
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ email: normalizedEmail.toLowerCase(), role }));
+
+      navigate(isAdminToken(token) ? "/admin" : "/dashboard");
     } catch (error) {
       console.error(error);
       const data = error.response?.data;
@@ -56,30 +68,24 @@ function Login() {
   };
 
   return (
-    <div className="auth-page">
+    <div className={`auth-page${isAdminMode ? " auth-page--admin" : ""}`}>
       <div className="auth-card">
         <div className="auth-mode-switch" role="group" aria-label="Login type">
           <button
             type="button"
-            className={!isAdminLogin ? "active" : ""}
-            aria-pressed={!isAdminLogin}
+            className={!isAdminMode ? "active" : ""}
+            aria-pressed={!isAdminMode}
             disabled={submitting}
-            onClick={() => {
-              setIsAdminLogin(false);
-              setMessage("");
-            }}
+            onClick={() => switchLoginMode(false)}
           >
             User login
           </button>
           <button
             type="button"
-            className={isAdminLogin ? "active" : ""}
-            aria-pressed={isAdminLogin}
+            className={isAdminMode ? "active" : ""}
+            aria-pressed={isAdminMode}
             disabled={submitting}
-            onClick={() => {
-              setIsAdminLogin(true);
-              setMessage("");
-            }}
+            onClick={() => switchLoginMode(true)}
           >
             Admin login
           </button>
@@ -87,7 +93,7 @@ function Login() {
 
         <div className="auth-header">
           <div className="brand-icon">
-            {isAdminLogin ? (
+            {isAdminMode ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z" />
                 <path d="m9 12 2 2 4-4" />
@@ -99,9 +105,9 @@ function Login() {
               </svg>
             )}
           </div>
-          <h1>{isAdminLogin ? "Admin sign in" : "Sign in to AI TicketTriage"}</h1>
+          <h1>{isAdminMode ? "Admin sign in" : "Sign in to AI TicketTriage"}</h1>
           <p>
-            {isAdminLogin
+            {isAdminMode
               ? "Sign in to manage support tickets."
               : "Enter your credentials to view your support tickets."}
           </p>
@@ -176,11 +182,11 @@ function Login() {
             style={{ width: "100%", padding: "10px", marginTop: "4px" }}
             disabled={submitting}
           >
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? "Signing in..." : isAdminMode ? "Admin sign in" : "Sign in"}
           </button>
 
           <div className="auth-footer-links">
-            {isAdminLogin ? (
+            {isAdminMode ? (
               "Administrator access"
             ) : (
               <>
