@@ -190,6 +190,16 @@
 .admin-information-panel,.admin-requester-panel { padding: 16px; }
 .admin-information-panel .admin-panel-heading,.admin-requester-panel .admin-panel-heading { padding-bottom: 13px; border-bottom: 1px solid #eff1f5; }
 .admin-info-field { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-bottom: 1px solid #f0f2f6; }
+.admin-edit-button,.admin-edit-save,.admin-edit-cancel { min-height: 32px; padding: 0 12px; border: 1px solid var(--admin-line); border-radius: 7px; font-size: 11px; font-weight: 600; }
+.admin-edit-button,.admin-edit-save { background: var(--admin-blue); color: #fff; }
+.admin-edit-button:hover,.admin-edit-save:hover { filter: brightness(.95); }
+.admin-edit-field select { min-height: 36px; padding: 0 9px; border: 1px solid var(--admin-line); border-radius: 7px; background: rgba(255, 255, 255, 0.08); color: #fff; font: inherit; }
+.admin-edit-field select option { background: #14231b; color: #fff; }
+.admin-edit-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; }
+.admin-edit-cancel { background: #f12121; color: var(--admin-ink); }
+.admin-edit-button:focus-visible,.admin-edit-save:focus-visible,.admin-edit-cancel:focus-visible,.admin-edit-field select:focus-visible { outline: 2px solid var(--admin-blue); outline-offset: 2px; }
+.admin-edit-save:disabled,.admin-edit-cancel:disabled { cursor: not-allowed; opacity: .6; }
+.admin-edit-note { padding-top: 9px; color: rgba(255, 255, 255, 0.7); font-size: 10px; line-height: 1.5; }
 .admin-info-field:last-child { padding-bottom: 1px; border-bottom: 0; }
 .admin-info-field > span { color: #9aa4b3; font-size: 9px; }
 .admin-info-field > strong { display: flex; align-items: center; gap: 6px; color: #59677c; font-size: 10px; font-weight: 550; }

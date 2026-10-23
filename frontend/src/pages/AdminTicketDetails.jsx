@@ -17,6 +17,8 @@ function AdminTicketDetails() {
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [editValues, setEditValues] = useState({ status: "", priority: "", department: "", category: "" });
 
   // Load this ticket from the backend; `ticket` stays null if it is missing or the request fails
   useEffect(() => {
@@ -40,6 +42,32 @@ function AdminTicketDetails() {
       ignore = true;
     };
   }, [ticketId, navigate]);
+
+  const startEditing = () => {
+    setEditValues({
+      status: ticket.status,
+      priority: ticket.priority,
+      department: ticket.department,
+      category: ticket.category.toLowerCase()
+    });
+    setEditing(true);
+  };
+
+  const saveChanges = () => {
+    setTicket((currentTicket) => ({
+      ...currentTicket,
+      ...editValues,
+      statusHistory: editValues.status === currentTicket.status
+        ? currentTicket.statusHistory
+        : [...currentTicket.statusHistory, {
+          status: editValues.status,
+          note: `Status changed to ${statusLabel(editValues.status)}`,
+          actor: "admin",
+          updatedAt: new Date().toISOString()
+        }]
+    }));
+    setEditing(false);
+  };
 
   if (loading) {
     return (
@@ -98,10 +126,60 @@ function AdminTicketDetails() {
             </div>
             <aside className="admin-detail-aside">
               {/* Ticket facts: department, category, priority, related item, id */}
-              <section className="admin-panel admin-information-panel"><div className="admin-panel-heading"><div><h2>Ticket information</h2></div></div>
-                <div className="admin-info-field"><span>Department</span><strong><i className="department-info-dot" />{ticket.department}</strong></div>
-                <div className="admin-info-field"><span>Category</span><strong>{ticket.category}</strong></div>
-                <div className="admin-info-field"><span>Priority</span><strong className={`priority-text-${ticket.priority.toLowerCase()}`}><i className={`priority-dot priority-${ticket.priority.toLowerCase()}`} />{ticket.priority}</strong></div>
+              <section className="admin-panel admin-information-panel"><div className="admin-panel-heading"><div><h2>Ticket information</h2></div>
+                {!editing && <button type="button" className="admin-edit-button" onClick={startEditing}>Edit</button>}
+              </div>
+                {editing ? (
+                  <>
+                    <label className="admin-info-field admin-edit-field"><span>Department</span>
+                      <select value={editValues.department} onChange={(event) => setEditValues({ ...editValues, department: event.target.value })}>
+                        <option value="IT">IT</option>
+                        <option value="Facilities">Facilities</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Customer Support">Customer Support</option>
+                        <option value="Unassigned">Unassigned</option>
+                      </select>
+                    </label>
+                    <label className="admin-info-field admin-edit-field"><span>Category</span>
+                      <select value={editValues.category} onChange={(event) => setEditValues({ ...editValues, category: event.target.value })}>
+                        <option value="billing">Billing</option>
+                        <option value="technical">Technical</option>
+                        <option value="account">Account</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="other">Other</option>
+                        <option value="general">General</option>
+                      </select>
+                    </label>
+                    <label className="admin-info-field admin-edit-field"><span>Status</span>
+                      <select value={editValues.status} onChange={(event) => setEditValues({ ...editValues, status: event.target.value })}>
+                        <option value="submitted">Submitted</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In progress</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                      </select>
+                    </label>
+                    <label className="admin-info-field admin-edit-field"><span>Priority</span>
+                      <select value={editValues.priority} onChange={(event) => setEditValues({ ...editValues, priority: event.target.value })}>
+                        <option value="Low">Low</option>
+                        <option value="Normal">Normal</option>
+                        <option value="High">High</option>
+                      </select>
+                    </label>
+                    <p className="admin-edit-note">Changes apply to this page only and are not saved to the ticket record.</p>
+                    <div className="admin-edit-actions">
+                      <button type="button" className="admin-edit-cancel" onClick={() => setEditing(false)}>Cancel</button>
+                      <button type="button" className="admin-edit-save" onClick={saveChanges}>Save changes</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="admin-info-field"><span>Department</span><strong><i className="department-info-dot" />{ticket.department}</strong></div>
+                    <div className="admin-info-field"><span>Category</span><strong>{ticket.category}</strong></div>
+                    <div className="admin-info-field"><span>Priority</span><strong className={`priority-text-${ticket.priority.toLowerCase()}`}><i className={`priority-dot priority-${ticket.priority.toLowerCase()}`} />{ticket.priority}</strong></div>
+                  </>
+                )}
                 <div className="admin-info-field"><span>Related item</span><strong>{ticket.item}</strong></div>
                 <div className="admin-info-field"><span>Ticket ID</span><strong className="ticket-id-copy">{ticket.ticketId}</strong></div>
               </section>

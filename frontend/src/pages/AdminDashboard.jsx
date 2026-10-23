@@ -114,7 +114,7 @@ function AdminDashboard() {
         </div>
         <p className="admin-nav-label">MENU</p>
         {/* "All tickets" clears the filters and scrolls to the table */}
-        <button className="admin-nav-item active">Overview</button>
+        
         <button className="admin-nav-item" onClick={() => { setStatusFilter("all"); setDepartmentFilter("all"); document.getElementById("admin-ticket-list")?.scrollIntoView({ behavior: "smooth" }); }}>All tickets <span className="admin-nav-count">{counts.total}</span></button>
         <p className="admin-nav-label admin-nav-label-spaced">TEAMS</p>
         {/* One button per department; click to filter the table, click again to clear */}
