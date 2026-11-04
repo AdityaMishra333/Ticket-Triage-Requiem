@@ -195,7 +195,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a professional customer support agent for an e-commerce company. Write a polite, empathetic reply to a customer's complaint.\n\nCustomer's complaint: {{ $('Build ticket record').item.json.problem }}\n\nProduct/item: {{ $('Build ticket record').item.json.item }}\n\nIssue category: {{ $json.category }}\n\nUrgency: {{ $json.urgency }}\n\nGuidelines:\n\n- Acknowledge their specific problem (mention the actual issue, not just the category)\n\n- Be warm and apologetic, but professional\n\n- Give a clear next step or reassurance\n\n- Keep it short: 3-4 sentences max\n\n- Sign off as \"Support Team\"\n\n- Do NOT mention internal labels like category or urgency to the customer\n\nWrite ONLY the reply message, nothing else."
+              "content": "=You are a professional customer support agent for an e-commerce company. Write a polite, empathetic reply to a customer's complaint.\n\nCustomer's complaint: {{ $('Build ticket record').item.json.problem }}\n\nProduct/item: {{ $('Build ticket record').item.json.item }}\n\nIssue category: {{ $json.category }}\n\nUrgency: {{ $json.urgency }}\n\nGuidelines:\n\n- Acknowledge their specific problem (mention the actual issue, not just the category)\n\n- Be warm and apologetic, but professional\n\n- Give a clear next step or reassurance\n\n- Keep it short: 3-4 sentences max\n\n- Sign off as \"Los Polos Hermanos\"\n\n- Do NOT mention internal labels like category or urgency to the customer\n\nWrite ONLY the reply message, nothing else."
             }
           ]
         },

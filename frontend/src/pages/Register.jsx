@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { isValidEmail, isValidName } from "../utils/validation";
+import { LIMITS, registerValidators } from "../utils/validation";
+import { useFieldErrors } from "../utils/useFieldErrors";
+import FieldError from "../components/FieldError";
+import AuthLayout from "../components/AuthLayout";
 
 // Sign-up page for USERS only. It creates a normal user account
 // (POST /auth/create); there is no admin registration here, because the
@@ -20,6 +23,8 @@ function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { errors, recheckField, checkAll, fieldProps } = useFieldErrors(registerValidators);
+  const values = { ...formData, confirmPassword };
 
   // Updates the field that matches the input's name attribute (name / email / password)
   const handleChange = (e) => {
@@ -27,31 +32,19 @@ function Register() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    const nextValues = { ...values, [e.target.name]: e.target.value };
+    recheckField(e.target.name, nextValues);
+    if (e.target.name === "password") recheckField("confirmPassword", nextValues);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
-    // Client-side validation; the first failing rule is shown and the request is not sent
+    // Client-side validation; errors are shown under each field and the request is not sent
+    if (!checkAll(values)) return;
     const name = formData.name.trim();
     const email = formData.email.trim();
-    if (!isValidName(name)) {
-      setMessage("Provide a valid UserName.");
-      return;
-    }
-    if (!isValidEmail(email)) {
-      setMessage("Enter a valid email address.");
-      return;
-    }
-    if (formData.password.length < 6) {
-      setMessage("Password must be at least 6 characters.");
-      return;
-    }
-    if (formData.password !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
-    }
 
     try {
       setSubmitting(true);
@@ -90,14 +83,14 @@ function Register() {
   };
 
   return (
-    <div className="auth-page dashboard-bg">
+    <AuthLayout>
       <div className="auth-card">
         <div className="auth-header">
           <h1>Create an account</h1>
           <p>Get started with Los Polos Hermanos to report and track issues.</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           {/* Name */}
           <div className="form-group-field">
             <label className="field-label" htmlFor="reg-name">
@@ -110,10 +103,12 @@ function Register() {
               name="name"
               autoComplete="name"
               required
-              placeholder="e.g. Alex Rivera"
+              maxLength={LIMITS.name.max}
               value={formData.name}
               onChange={handleChange}
+              {...fieldProps("name", values)}
             />
+            <FieldError name="name" message={errors.name} />
           </div>
 
           {/* Email */}
@@ -128,10 +123,12 @@ function Register() {
               name="email"
               autoComplete="email"
               required
-              placeholder="alex@example.com"
+              maxLength={LIMITS.email.max}
               value={formData.email}
               onChange={handleChange}
+              {...fieldProps("email", values)}
             />
+            <FieldError name="email" message={errors.email} />
           </div>
 
           {/* Password (with show / hide button) */}
@@ -148,9 +145,9 @@ function Register() {
                 autoComplete="new-password"
                 minLength={6}
                 required
-                placeholder="At least 6 characters"
                 value={formData.password}
                 onChange={handleChange}
+                {...fieldProps("password", values)}
               />
               <button
                 className="password-toggle-btn"
@@ -161,6 +158,7 @@ function Register() {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+            <FieldError name="password" message={errors.password} />
           </div>
 
           {/* Confirm password (must match; checked in handleSubmit) */}
@@ -176,9 +174,12 @@ function Register() {
                 name="confirmPassword"
                 autoComplete="new-password"
                 required
-                placeholder="Repeat password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  recheckField("confirmPassword", { ...values, confirmPassword: e.target.value });
+                }}
+                {...fieldProps("confirmPassword", values)}
               />
               <button
                 className="password-toggle-btn"
@@ -189,6 +190,7 @@ function Register() {
                 {showConfirmPassword ? "Hide" : "Show"}
               </button>
             </div>
+            <FieldError name="confirmPassword" message={errors.confirmPassword} />
           </div>
 
           {message && (
@@ -199,8 +201,7 @@ function Register() {
 
           <button
             type="submit"
-            className="btn-primary"
-            style={{ width: "100%", padding: "10px", marginTop: "4px" }}
+            className="btn-primary auth-submit"
             disabled={submitting}
           >
             {submitting ? "Creating account..." : "Create account"}
@@ -218,7 +219,7 @@ function Register() {
           </div>
         </form>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
 

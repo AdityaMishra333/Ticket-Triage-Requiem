@@ -2,16 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { normalizeTicket } from "../utils/normalizeTicket";
+import { LIMITS, statusLabel } from "../utils/validation";
 import "../Admin.css";
 
 // ADMIN ONLY page (route: /admin). Shows every ticket submitted by users,
 // fetched from the backend (GET /tickets/admin/all, admin token required).
 
 // Teams shown in the sidebar, chart and filter
-const departments = ["IT", "Facilities", "HR", "Finance", "Customer Support"];
+// n8n statuses: new -> classified -> awaiting_approval -> resolving (redraft) / resolved
+const OPEN_STATUSES = ["new", "classified", "awaiting_approval"];
+const IN_PROGRESS_STATUSES = ["resolving", "in_progress"];
 
-// "in_progress" -> "in progress" for display
-const statusLabel = (status) => (status || "submitted").replaceAll("_", " ");
+const departments = ["IT", "Facilities", "HR", "Finance", "Customer Support"];
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -62,12 +64,12 @@ function AdminDashboard() {
     }, [navigate]);
 
   // Numbers for the four stat cards and the status tabs.
-  // "Open" = submitted + assigned, "Resolved" = resolved + closed.
+  // "Open" = new + classified + awaiting_approval, "Working" = resolving + in_progress.
   const counts = useMemo(() => ({
     total: tickets.length,
-    open: tickets.filter((ticket) => ["submitted", "assigned"].includes(ticket.status)).length,
-    inProgress: tickets.filter((ticket) => ticket.status === "in_progress").length,
-    resolved: tickets.filter((ticket) => ["resolved", "closed"].includes(ticket.status)).length
+    open: tickets.filter((ticket) => OPEN_STATUSES.includes(ticket.status)).length,
+    inProgress: tickets.filter((ticket) => IN_PROGRESS_STATUSES.includes(ticket.status)).length,
+    resolved: tickets.filter((ticket) => ["resolved"].includes(ticket.status)).length
   }), [tickets]);
 
   // Ticket count per department for the "Tickets by department" bar chart, biggest first
@@ -87,9 +89,9 @@ function AdminDashboard() {
         ticket.ticketId, ticket.subject, ticket.customerName, ticket.department
       ].some((value) => (value || "").toLowerCase().includes(query));
       const matchesStatus = statusFilter === "all"
-        || (statusFilter === "open" && ["submitted", "assigned"].includes(ticket.status))
-        || (statusFilter === "in_progress" && ticket.status === "in_progress")
-        || (statusFilter === "resolved" && ["resolved", "closed"].includes(ticket.status));
+        || (statusFilter === "open" && OPEN_STATUSES.includes(ticket.status))
+        || (statusFilter === "in_progress" && IN_PROGRESS_STATUSES.includes(ticket.status))
+        || (statusFilter === "resolved" && ["resolved"].includes(ticket.status));
       const matchesDepartment = departmentFilter === "all" || ticket.department === departmentFilter;
       return matchesSearch && matchesStatus && matchesDepartment;
     });
@@ -104,14 +106,9 @@ function AdminDashboard() {
       {/* Left sidebar: brand, menu, team (department) shortcuts and sign out */}
       <aside className="admin-sidebar">
         <button className="admin-brand" onClick={() => navigate("/admin")} aria-label="Los Polos Hermanos dashboard">
-          <span className="admin-brand-mark">L</span>
+          <span className="admin-brand-mark">LP</span>
           <span>Los Polos Hermanos<span className="admin-brand-period">.</span></span>
         </button>
-        <div className="admin-workspace">
-          <span className="admin-workspace-icon">A</span>
-          <span><strong>Support team</strong><small>Admin Dashboard</small></span>
-          
-        </div>
         <p className="admin-nav-label">MENU</p>
         {/* "All tickets" clears the filters and scrolls to the table */}
         
@@ -130,16 +127,16 @@ function AdminDashboard() {
         {/* Sign out: clears the saved session and returns to the login page */}
         <div className="admin-sidebar-footer">
           <span className="admin-avatar">AD</span>
-          <span><strong>Administrator</strong><small>Support team</small></span>
+          <span><strong>Administrator</strong><small></small></span>
           
         </div>
       </aside>
 
       {/* Main area */}
       <main className="admin-main">
-        {/* Top bar with breadcrumb */}
+        {/* Top bar with the page title */}
         <header className="admin-topbar">
-          <div className="admin-breadcrumb">Every ticket submitted by users, newest first</div>
+          <div className="admin-topbar-title"><span className="admin-workspace-icon">A</span><span>Admin Dashboard</span></div>
           <div className="admin-top-actions"><span className="admin-top-avatar">AD</span>
             {/* Sign out: same behaviour as the user dashboard (clear session, go to login) */}
             <button type="button" className="admin-signout-button" title="Sign out" onClick={() => { localStorage.removeItem("token"); localStorage.removeItem("user"); navigate("/login"); }}>Sign out</button>
@@ -154,12 +151,12 @@ function AdminDashboard() {
           {loading && <div className="admin-demo-notice" role="status"><div><strong>Loading tickets…</strong></div></div>}
           {error && <div className="admin-demo-notice" role="alert"><div><strong>{error}</strong></div></div>}
 
-          {/* Four stat cards: total, waiting, in progress, completed */}
+          {/* Four stat cards: total, waiting, working, resolved */}
           <section className="admin-stat-grid" aria-label="Ticket totals">
-            <article className="admin-stat-card"><div className="admin-stat-top"><span>Total tickets</span></div><strong>{counts.total}</strong><small>Submitted by users</small><div className="admin-stat-foot">From all teams</div></article>
-            <article className="admin-stat-card"><div className="admin-stat-top"><span>Waiting</span></div><strong>{counts.open}</strong><small>New or assigned</small><div className="admin-stat-foot"><span className="stat-dot amber-dot" /> Waiting for a reply</div></article>
-            <article className="admin-stat-card"><div className="admin-stat-top"><span>In progress</span></div><strong>{counts.inProgress}</strong><small>Being handled</small><div className="admin-stat-foot"><span className="stat-dot violet-dot" /> Work has started</div></article>
-            <article className="admin-stat-card"><div className="admin-stat-top"><span>Completed</span></div><strong>{counts.resolved}</strong><small>Resolved or closed</small><div className="admin-stat-foot"><span className="stat-dot green-dot" /> Finished tickets</div></article>
+            <article className="admin-stat-card"><div className="admin-stat-top"><span>Total tickets</span></div><strong>{counts.total}</strong><small>Submitted by users</small></article>
+            <article className="admin-stat-card"><div className="admin-stat-top"><span>Waiting</span></div><strong>{counts.open}</strong><small>Received or in approval</small></article>
+            <article className="admin-stat-card"><div className="admin-stat-top"><span>Working</span></div><strong>{counts.inProgress}</strong><small>Being handled</small></article>
+            <article className="admin-stat-card"><div className="admin-stat-top"><span>Resolved</span></div><strong>{counts.resolved}</strong><small>Finished tickets</small></article>
           </section>
 
           {/* Middle row: department chart (left) and newest waiting tickets (right) */}
@@ -180,12 +177,12 @@ function AdminDashboard() {
 
             {/* "Waiting for a reply": first 3 submitted/assigned tickets; click one to open its details page */}
             <article className="admin-panel attention-panel">
-              <div className="admin-panel-heading"><div><h2>Waiting for a reply</h2><p>New and assigned tickets</p></div><span className="attention-count">{counts.open}</span></div>
-              {tickets.filter((ticket) => ["submitted", "assigned"].includes(ticket.status)).slice(0, 3).map((ticket) => (
+              <div className="admin-panel-heading"><div><h2>Waiting for a reply</h2><p>Received and in approval</p></div><span className="attention-count">{counts.open}</span></div>
+              {tickets.filter((ticket) => OPEN_STATUSES.includes(ticket.status)).slice(0, 3).map((ticket) => (
                 <button className="attention-ticket" key={ticket.ticketId} onClick={() => navigate(`/admin/tickets/${ticket.ticketId}`)}>
                   <span className="attention-ticket-icon">{ticket.customerName.split(" ").map((part) => part[0]).join("")}</span>
                   <span className="attention-ticket-info"><strong>{ticket.subject}</strong><small>{ticket.ticketId} <i>·</i> {ticket.department}</small></span>
-                  <span className={`priority-dot priority-${ticket.priority.toLowerCase()}`} title={`${ticket.priority} priority`} />
+                  <span className={`priority-label priority-text-${ticket.urgency.toLowerCase()}`}>{ticket.urgency}</span>
                   
                 </button>
               ))}
@@ -195,14 +192,14 @@ function AdminDashboard() {
 
           {/* Main ticket table with status tabs, search and department filter. Clicking a row opens the ticket details page. */}
           <section className="admin-panel admin-ticket-panel" id="admin-ticket-list">
-            <div className="admin-panel-heading ticket-panel-heading"><div><h2>All tickets <span className="ticket-total-chip">{filteredTickets.length}</span></h2><p>Open a ticket to see its details and updates</p></div><button className="admin-filter-button" onClick={() => { setSearch(""); setStatusFilter("all"); setDepartmentFilter("all"); }}><span>Clear filters</span></button></div>
+            <div className="admin-panel-heading ticket-panel-heading"><div><h2>All tickets</h2><p>Open a ticket to see its details and updates</p></div></div>
             <div className="admin-ticket-controls">
               <div className="admin-status-tabs">
-                {[["all", "All tickets"], ["open", "Open"], ["in_progress", "In progress"], ["resolved", "Resolved"]].map(([value, label]) => <button key={value} className={statusFilter === value ? "active" : ""} onClick={() => setStatusFilter(value)}>{label}<span>{value === "all" ? counts.total : value === "open" ? counts.open : value === "in_progress" ? counts.inProgress : counts.resolved}</span></button>)}
+                {[["all", "All tickets"], ["open", "Open"], ["in_progress", "Working"], ["resolved", "Resolved"]].map(([value, label]) => <button key={value} className={statusFilter === value ? "active" : ""} onClick={() => setStatusFilter(value)}>{label}</button>)}
               </div>
               <div className="admin-ticket-filters">
-                <label className="admin-search"><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name or ticket ID" /></label>
-                <select aria-label="Filter by department" value={departmentFilter} onChange={(event) => setDepartmentFilter(event.target.value)}><option value="all">All departments</option>{departments.map((department) => <option key={department}>{department}</option>)}</select>
+                <label className="admin-search"><input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Search by name or ticket ID" placeholder="Search name or ticket ID" maxLength={LIMITS.search.max} /></label>
+                <select aria-label="Filter by department" value={departmentFilter} onChange={(event) => setDepartmentFilter(event.target.value)}><option value="all">All Departments</option>{departments.map((department) => <option key={department}>{department}</option>)}</select>
               </div>
             </div>
             <div className="admin-table-scroll">
@@ -213,8 +210,8 @@ function AdminDashboard() {
                     <td><strong>{ticket.subject}</strong><small>{ticket.ticketId}</small></td>
                     <td><span className="requester-cell"><span>{ticket.customerName.split(" ").map((part) => part[0]).join("")}</span>{ticket.customerName}</span></td>
                     <td><span className="department-cell"><i />{ticket.department}</span></td>
-                    <td><span className={`priority-label priority-text-${ticket.priority.toLowerCase()}`}><i className={`priority-dot priority-${ticket.priority.toLowerCase()}`} />{ticket.priority}</span></td>
-                    <td><span className={`admin-status admin-status-${ticket.status}`}><i />{statusLabel(ticket.status)}</span></td>
+                    <td><span className={`priority-label priority-text-${ticket.urgency.toLowerCase()}`}><i className={`priority-dot priority-${ticket.urgency.toLowerCase()}`} />{ticket.urgency}</span></td>
+                    <td><span className={`admin-status admin-status-${ticket.status}`}>{statusLabel(ticket.status)}</span></td>
                     <td className="submitted-cell">{formatDate(ticket.createdAt)}</td>
                     <td className="table-arrow" />
                   </tr>
@@ -224,7 +221,7 @@ function AdminDashboard() {
             </div>
             <div className="admin-table-footer"><span>Showing <strong>{filteredTickets.length}</strong> of <strong>{counts.total}</strong> tickets</span></div>
           </section>
-          <footer className="admin-page-footer">Los Polos Hermanos <span>-</span> Admin</footer>
+          <footer> <br /> </footer>
         </div>
       </main>
     </div>

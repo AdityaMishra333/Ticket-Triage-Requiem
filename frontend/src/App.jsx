@@ -8,6 +8,7 @@ import TrackTicket from "./pages/TrackTicket";
 import AuthValidator from "./components/AuthValidator";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTicketDetails from "./pages/AdminTicketDetails"
+import NotFound from "./pages/NotFound";
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                         <Route path="/admin/tickets/:ticketId" element={<AdminTicketDetails />} />
                         <Route path="/tickets/:ticketId" element={<TicketDetails />}
 />
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </AuthValidator>
             }

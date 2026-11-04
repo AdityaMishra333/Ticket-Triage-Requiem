@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import FieldError from "../components/FieldError";
+import { LIMITS, MIN_SERVICE_DATE, ticketValidators, todayLocal } from "../utils/validation";
+import { useFieldErrors } from "../utils/useFieldErrors";
 
 function CreateTicket() {
   const navigate = useNavigate();
@@ -11,20 +14,22 @@ function CreateTicket() {
     subject: "",
     item: "",
     serviceDate: "",
-    description: "",
-    contactDetails: ""
+    problem: "",
+    yourEmail: ""
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [createdTicketId, setCreatedTicketId] = useState("");
   const [copied, setCopied] = useState(false);
+  const { errors, recheckField, checkAll, fieldProps } = useFieldErrors(ticketValidators);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    recheckField(e.target.name, { ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -32,14 +37,11 @@ function CreateTicket() {
     setMessage("");
     setCreatedTicketId("");
 
+    if (!checkAll(formData)) return;
+
     const cleanFormData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [key, value.trim()])
     );
-    const missingField = Object.values(cleanFormData).some((value) => !value);
-    if (missingField) {
-      setMessage("Please fill in all fields before submitting.");
-      return;
-    }
 
     try {
       setLoading(true);
@@ -66,12 +68,6 @@ function CreateTicket() {
     }
   };
 
-  const handleReset = () => {
-    setFormData({ customerName: "", subject: "", item: "", serviceDate: "", description: "", contactDetails: "" });
-    setCreatedTicketId("");
-    setMessage("");
-  };
-
   const copyId = () => {
     if (!createdTicketId) return;
     navigator.clipboard.writeText(createdTicketId);
@@ -83,10 +79,10 @@ function CreateTicket() {
     <div className="dashboard-bg">
       <Navbar />
 
-      <div className="page-container-narrow">
+      <main className="ticket-page">
         <div className="form-panel">
           <div className="form-header-simple">
-            <h1>Submit a request</h1>
+            <h1>Submit Request</h1>
             <p>Please describe your issue and our team will get back to you.</p>
           </div>
 
@@ -114,109 +110,116 @@ function CreateTicket() {
                 >
                   {copied ? "Copied" : "Copy reference ID"}
                 </button>
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={handleReset}
-                >
-                  Submit another
-                </button>
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="form-group-field">
-                <label className="field-label" htmlFor="ticket-customer-name">
-                  Customer name
-                </label>
-                <input
-                  id="ticket-customer-name"
-                  className="field-input"
-                  name="customerName"
-                  value={formData.customerName}
-                  onChange={handleChange}
-                  placeholder="e.g. Jane Doe"
-                  required
-                />
+            <form className="ticket-form" onSubmit={handleSubmit} noValidate>
+              <div className="ticket-form-grid">
+                <div className="form-group-field">
+                  <label className="field-label" htmlFor="ticket-customer-name">
+                    Customer Name
+                  </label>
+                  <input
+                    id="ticket-customer-name"
+                    className="field-input"
+                    name="customerName"
+                    value={formData.customerName}
+                    onChange={handleChange}
+                    autoComplete="name"
+                    maxLength={LIMITS.name.max}
+                    required
+                    {...fieldProps("customerName", formData)}
+                  />
+                  <FieldError name="customerName" message={errors.customerName} />
+                </div>
+                <div className="form-group-field">
+                  <label className="field-label" htmlFor="ticket-contact">
+                    Your Contact Email
+                  </label>
+                  <input
+                    id="ticket-contact"
+                    className="field-input"
+                    type="email"
+                    name="yourEmail"
+                    autoComplete="email"
+                    maxLength={LIMITS.email.max}
+                    value={formData.yourEmail}
+                    onChange={handleChange}
+                    required
+                    {...fieldProps("yourEmail", formData)}
+                  />
+                  <FieldError name="yourEmail" message={errors.yourEmail} />
+                </div>
+                <div className="form-group-field field-span-2">
+                  <label className="field-label" htmlFor="ticket-subject">
+                    Subject
+                  </label>
+                  <input
+                    id="ticket-subject"
+                    className="field-input"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    maxLength={LIMITS.subject.max}
+                    required
+                    {...fieldProps("subject", formData)}
+                  />
+                  <FieldError name="subject" message={errors.subject} />
+                </div>
+                <div className="form-group-field">
+                  <label className="field-label" htmlFor="ticket-item">
+                    Item
+                  </label>
+                  <input
+                    id="ticket-item"
+                    className="field-input"
+                    name="item"
+                    value={formData.item}
+                    onChange={handleChange}
+                    maxLength={LIMITS.item.max}
+                    required
+                    {...fieldProps("item", formData)}
+                  />
+                  <FieldError name="item" message={errors.item} />
+                </div>
+                <div className="form-group-field">
+                  <label className="field-label" htmlFor="ticket-service-date">
+                    Service Date
+                  </label>
+                  <input
+                    id="ticket-service-date"
+                    className="field-input"
+                    type="date"
+                    name="serviceDate"
+                    value={formData.serviceDate}
+                    onChange={handleChange}
+                    min={MIN_SERVICE_DATE}
+                    max={todayLocal()}
+                    required
+                    {...fieldProps("serviceDate", formData)}
+                  />
+                  <FieldError name="serviceDate" message={errors.serviceDate} />
+                </div>
               </div>
 
-              <div className="form-group-field">
-                <label className="field-label" htmlFor="ticket-subject">
-                  Subject
-                </label>
-                <input
-                  id="ticket-subject"
-                  className="field-input"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="e.g. Cannot access monthly billing invoice"
-                  required
-                />
-              </div>
-
-              <div className="form-group-field">
-                <label className="field-label" htmlFor="ticket-item">
-                  Item
-                </label>
-                <input
-                  id="ticket-item"
-                  className="field-input"
-                  name="item"
-                  value={formData.item}
-                  onChange={handleChange}
-                  placeholder="e.g. Annual maintenance plan"
-                  required
-                />
-              </div>
-
-              <div className="form-group-field">
-                <label className="field-label" htmlFor="ticket-service-date">
-                  Service date
-                </label>
-                <input
-                  id="ticket-service-date"
-                  className="field-input"
-                  type="date"
-                  name="serviceDate"
-                  value={formData.serviceDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group-field">
+              <div className="form-group-field field-grow">
                 <label className="field-label" htmlFor="ticket-description">
                   Description
                 </label>
                 <textarea
                   id="ticket-description"
                   className="field-textarea"
-                  name="description"
-                  value={formData.description}
+                  name="problem"
+                  value={formData.problem}
                   onChange={handleChange}
-                  placeholder="Provide as much detail as possible, including what you were doing when the issue occurred..."
                   required
+                  {...fieldProps("problem", formData)}
                 />
-              </div>
-
-              <div className="form-group-field">
-                <label className="field-label" htmlFor="ticket-contact">
-                  Your contact email or phone
-                </label>
-                <input
-                  id="ticket-contact"
-                  className="field-input"
-                  name="contactDetails"
-                  value={formData.contactDetails}
-                  onChange={handleChange}
-                  placeholder="name@company.com or +1 (555) 000-0000"
-                  required
-                />
+                <FieldError name="problem" message={errors.problem} />
               </div>
 
               {message && (
-                <div className="form-feedback error" role="alert" style={{ marginBottom: "16px" }}>
+                <div className="form-feedback error" role="alert">
                   <span>{message}</span>
                 </div>
               )}
@@ -227,7 +230,7 @@ function CreateTicket() {
                   className="btn-primary"
                   disabled={loading}
                 >
-                  {loading ? "Submitting..." : "Submit request"}
+                  {loading ? "Submitting..." : "Submit"}
                 </button>
                 <button
                   type="button"
@@ -240,7 +243,17 @@ function CreateTicket() {
             </form>
           )}
         </div>
-      </div>
+
+        <aside className="ticket-aside">
+          <h2>What happens next</h2>
+          <ol className="ticket-steps">
+            <li><strong>Received</strong>Your request is logged and sent to the right department.</li>
+            <li><strong>Approval</strong>Our team checks the suggested reply before it goes out.</li>
+            <li><strong>Working</strong>Our team handles your request and revises the reply if needed.</li>
+            <li><strong>Resolved</strong>The approved reply is sent to your contact email.</li>
+          </ol>
+        </aside>
+      </main>
     </div>
   );
 }

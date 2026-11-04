@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import FieldError from "../components/FieldError";
+import { LIMITS, normalizeTicketId, statusLabel, trackTicketValidators } from "../utils/validation";
+import { useFieldErrors } from "../utils/useFieldErrors";
+import { normalizeTicket } from "../utils/normalizeTicket";
 
 function TrackTicket() {
   const navigate = useNavigate();
@@ -9,17 +13,15 @@ function TrackTicket() {
   const [ticket, setTicket] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { errors, recheckField, checkAll, fieldProps } = useFieldErrors(trackTicketValidators);
 
   const trackTicket = async (event) => {
     event.preventDefault();
-    const requestedId = ticketId.trim();
+    const requestedId = normalizeTicketId(ticketId);
     setTicket(null);
     setMessage("");
 
-    if (!requestedId) {
-      setMessage("Please enter a ticket reference ID.");
-      return;
-    }
+    if (!checkAll({ ticketId })) return;
 
     try {
       setLoading(true);
@@ -31,7 +33,7 @@ function TrackTicket() {
         setMessage("The returned ticket could not be verified. Please check the ID.");
         return;
       }
-      setTicket(response.data);
+      setTicket(normalizeTicket(response.data));
     } catch (error) {
       console.error(error);
       setMessage(error.response?.data?.message || "No ticket found with that reference ID. Please check your confirmation.");
@@ -42,11 +44,9 @@ function TrackTicket() {
 
   const getStatusBadge = (status) => {
     const norm = (status || "").toLowerCase();
-    let display = norm.replace("_", " ");
     return (
       <span className={`status-badge ${norm}`}>
-        <span className="dot"></span>
-        {display || "Submitted"}
+        {statusLabel(status)}
       </span>
     );
   };
@@ -62,7 +62,7 @@ function TrackTicket() {
             <p>Enter your ticket ID to check its current status.</p>
           </div>
 
-          <form onSubmit={trackTicket}>
+          <form onSubmit={trackTicket} noValidate>
             <div className="form-group-field">
               <label className="field-label" htmlFor="track-ticket-id">
                 Ticket Reference ID
@@ -72,19 +72,25 @@ function TrackTicket() {
                   id="track-ticket-id"
                   className="field-input"
                   type="text"
-                  placeholder="e.g. TKT-1718293847291-382"
+                  name="ticketId"
+                  maxLength={LIMITS.ticketId.max}
                   value={ticketId}
-                  onChange={(e) => setTicketId(e.target.value)}
+                  onChange={(e) => {
+                    setTicketId(e.target.value);
+                    recheckField("ticketId", { ticketId: e.target.value });
+                  }}
                   required
+                  {...fieldProps("ticketId", { ticketId })}
                 />
                 <button
                   type="submit"
                   className="btn-primary"
                   disabled={loading}
                 >
-                  {loading ? "Searching..." : "Look up"}
+                  {loading ? "Searching..." : "Enter"}
                 </button>
               </div>
+              <FieldError name="ticketId" message={errors.ticketId} />
             </div>
 
             {message && (
@@ -109,7 +115,7 @@ function TrackTicket() {
               </div>
 
               <p style={{ fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.5", marginBottom: "16px" }}>
-                {ticket.description}
+                {ticket.problem}
               </p>
 
               <button

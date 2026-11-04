@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import { statusLabel } from "../utils/validation";
+import { normalizeTicket } from "../utils/normalizeTicket";
+
+// How often an open ticket checks for new activity from n8n or an admin
+const REFRESH_MS = 20000;
 
 function TicketDetails() {
   const { ticketId } = useParams();
@@ -10,6 +15,7 @@ function TicketDetails() {
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -17,15 +23,15 @@ function TicketDetails() {
       try {
         const response = await api.get(`/tickets/${ticketId}`);
         if (!ignore) {
-          setTicket(response.data);
+          setTicket(normalizeTicket(response.data));
         }
       } catch (error) {
         console.error("Error fetching ticket:", error);
         if (error.response?.status === 401) {
           localStorage.removeItem("token");
           navigate("/login");
-        } else {
-          alert(error.response?.data?.message || "Unable to load ticket");
+        } else if (!ignore && error.response?.status !== 404) {
+          setLoadError(error.response?.data?.message || "We couldn't load this ticket. Please try again.");
         }
       } finally {
         if (!ignore) {
@@ -35,8 +41,12 @@ function TicketDetails() {
     };
 
     loadTicket();
+    const refresh = setInterval(() => {
+      if (!document.hidden) loadTicket();
+    }, REFRESH_MS);
     return () => {
       ignore = true;
+      clearInterval(refresh);
     };
   }, [ticketId, navigate]);
 
@@ -49,25 +59,22 @@ function TicketDetails() {
 
   const getStatusBadge = (status) => {
     const norm = (status || "").toLowerCase();
-    let display = norm.replace("_", " ");
     return (
       <span className={`status-badge ${norm}`}>
-        <span className="dot"></span>
-        {display || "Submitted"}
+        {statusLabel(status)}
       </span>
     );
   };
 
   const formatActivityText = (item) => {
     const s = (item.status || "").toLowerCase();
-    const actor = item.actor === "customer" ? "You" : item.actor === "agent" ? "Support Agent" : "System";
+    const actor = item.actor === "customer" ? "You" : (item.actor === "agent" || item.actor === "admin") ? "Support Agent" : "System";
 
-    if (s === "submitted") return `Ticket created by ${actor}`;
-    if (s === "assigned") return `Assigned for investigation (${actor})`;
-    if (s === "in_progress") return `Status changed to In Progress by ${actor}`;
-    if (s === "resolved") return `Issue marked as Resolved by ${actor}`;
-    if (s === "closed") return `Ticket closed by ${actor}`;
-    return `Status changed to ${s.replace("_", " ")} by ${actor}`;
+    if (s === "new" && item.actor === "customer") return "Ticket created by You";
+    if (s === "classified") return `Ticket classified by ${actor}`;
+    if (s === "awaiting_approval" && item.actor === "system") return "Reply drafted, waiting for approval";
+    if (s === "resolving") return `Reply being revised by ${actor}`;
+    return `Status changed to ${statusLabel(s)} by ${actor}`;
   };
 
   return (
@@ -79,7 +86,7 @@ function TicketDetails() {
           className="back-link"
           onClick={() => navigate("/dashboard")}
         >
-          Back to all tickets
+          <b>Back</b>
         </button>
 
         {loading ? (
@@ -90,9 +97,9 @@ function TicketDetails() {
           </div>
         ) : !ticket ? (
           <div className="content-panel" style={{ textAlign: "center", padding: "40px" }}>
-            <h3>Ticket not found</h3>
+            <h3>{loadError ? "Ticket unavailable" : "Ticket not found"}</h3>
             <p style={{ color: "var(--text-muted)", margin: "8px 0 20px" }}>
-              We couldn't find a ticket matching ID #{ticketId}.
+              {loadError || `We couldn't find a ticket matching ID #${ticketId}.`}
             </p>
             <button className="btn-primary" onClick={() => navigate("/dashboard")}>
               Return to tickets
@@ -113,7 +120,7 @@ function TicketDetails() {
 
                 <div>
                   <div className="section-subhead">Description</div>
-                  <div className="desc-text-box">{ticket.description}</div>
+                  <div className="desc-text-box">{ticket.problem}</div>
                 </div>
               </div>
 
@@ -183,7 +190,7 @@ function TicketDetails() {
                 <div className="meta-field">
                   <div className="meta-field-label">Contact Details</div>
                   <div className="meta-field-value">
-                    {ticket.contactDetails || "None provided"}
+                    {ticket.yourEmail || "None provided"}
                   </div>
                 </div>
 
@@ -202,15 +209,7 @@ function TicketDetails() {
                   </div>
                 )}
 
-                <div style={{ marginTop: "20px" }}>
-                  <button
-                    className="btn-secondary"
-                    style={{ width: "100%" }}
-                    onClick={() => navigate("/create-ticket")}
-                  >
-                    + Submit another request
-                  </button>
-                </div>
+
               </div>
             </div>
           </div>

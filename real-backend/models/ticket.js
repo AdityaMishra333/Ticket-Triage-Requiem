@@ -27,27 +27,42 @@ const TicketDetails = new mongoose.Schema({
         required : true
     },
 
-    description : {
+    problem : {
         type : String,
         required : true
     },
 
-    contactDetails : {
+    yourEmail : {
         type : String,
         required : true
     },
 
     status : {
         type : String,
-        default : "pending"
+        default : "new"
     },
 
     category : {
         type : String
     },
 
-    priority : {
+    urgency : {
         type : String
+    },
+
+    submittedAt : {
+        type : Date,
+        default : Date.now
+    },
+
+    // written by n8n
+    draftReply : {
+        type : String
+    },
+
+    escalated : {
+        type : Boolean,
+        default : false
     },
 
     user : {

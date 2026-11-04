@@ -17,12 +17,16 @@ export default function AuthValidator({ children }) {
 
     useEffect(() => {
         async function validateToken() {
+            const token = localStorage.getItem("token");
+
             if (UnauthRoutes.includes(location.pathname)) {
+                // Already logged in: skip the login and sign-up pages
+                if (isTokenValid(token)) {
+                    navigate(isAdminToken(token) ? "/admin" : "/dashboard", { replace: true });
+                }
                 setIsLoading(false);
                 return;
             }
-
-            const token = localStorage.getItem("token");
 
             if (!isTokenValid(token)) {
                 localStorage.removeItem("token");
@@ -32,6 +36,9 @@ export default function AuthValidator({ children }) {
                 // ADMIN ONLY pages: logged in, but not an admin -> back to the user dashboard.
                 // UI guard only; the backend adminAuth middleware enforces the role on the API.
                 navigate("/dashboard");
+            } else if (location.pathname === "/dashboard" && isAdminToken(token)) {
+                // Admins have no customer dashboard, their tickets page is /admin
+                navigate("/admin", { replace: true });
             }
             setIsLoading(false);
         }
@@ -40,7 +47,7 @@ export default function AuthValidator({ children }) {
     }, [location.pathname, navigate]);
     
     if (isLoading) {
-        return <div>Loading...</div>;
+        return null;
     }
 
     return children;

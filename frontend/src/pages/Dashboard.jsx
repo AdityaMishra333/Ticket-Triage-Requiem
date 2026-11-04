@@ -2,6 +2,12 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import { LIMITS, statusLabel } from "../utils/validation";
+import { normalizeTicket } from "../utils/normalizeTicket";
+
+// n8n statuses: new -> classified -> awaiting_approval -> resolving (redraft) / resolved
+const OPEN_STATUSES = ["new", "classified", "awaiting_approval"];
+const IN_PROGRESS_STATUSES = ["resolving", "in_progress"];
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -18,7 +24,7 @@ function Dashboard() {
       try {
         const response = await api.get("/tickets");
         if (!ignore) {
-          setTickets(response.data.tickets || []);
+          setTickets((response.data.tickets || []).map(normalizeTicket));
         }
       } catch (error) {
         console.error("Error fetching tickets:", error);
@@ -42,13 +48,9 @@ function Dashboard() {
   // Compute stats
   const stats = useMemo(() => {
     const total = tickets.length;
-    const submitted = tickets.filter((t) => t.status === "submitted").length;
-    const inProgress = tickets.filter(
-      (t) => t.status === "in_progress" || t.status === "assigned"
-    ).length;
-    const resolved = tickets.filter(
-      (t) => t.status === "resolved" || t.status === "closed"
-    ).length;
+    const submitted = tickets.filter((t) => OPEN_STATUSES.includes(t.status)).length;
+    const inProgress = tickets.filter((t) => IN_PROGRESS_STATUSES.includes(t.status)).length;
+    const resolved = tickets.filter((t) => t.status === "resolved").length;
 
     return { total, submitted, inProgress, resolved };
   }, [tickets]);
@@ -61,14 +63,13 @@ function Dashboard() {
         !q ||
         (ticket.subject || "").toLowerCase().includes(q) ||
         (ticket.ticketId || "").toLowerCase().includes(q) ||
-        (ticket.description || "").toLowerCase().includes(q);
+        (ticket.problem || "").toLowerCase().includes(q);
 
       if (!matchesSearch) return false;
 
       if (statusFilter === "all") return true;
-      if (statusFilter === "in_progress") {
-        return ticket.status === "in_progress" || ticket.status === "assigned";
-      }
+      if (statusFilter === "submitted") return OPEN_STATUSES.includes(ticket.status);
+      if (statusFilter === "in_progress") return IN_PROGRESS_STATUSES.includes(ticket.status);
       return ticket.status === statusFilter;
     });
   }, [tickets, searchQuery, statusFilter]);
@@ -87,11 +88,9 @@ function Dashboard() {
 
   const getStatusBadge = (status) => {
     const norm = (status || "").toLowerCase();
-    let display = norm.replace("_", " ");
     return (
       <span className={`status-badge ${norm}`}>
-        <span className="dot"></span>
-        {display || "Submitted"}
+        {statusLabel(status)}
       </span>
     );
   };
@@ -104,7 +103,7 @@ function Dashboard() {
         {/* Header */}
         <div className="dashboard-header-row">
           <div>
-            <h1>AI Ticket Triage</h1>
+            <h1>My Tickets</h1>
             <p>Track, view, and manage your reported requests.</p>
           </div>
 
@@ -128,7 +127,7 @@ function Dashboard() {
           </div>
           <div className="metric-item">
             <span className="metric-num">{stats.inProgress}</span>
-            <span className="metric-label">In progress</span>
+            <span className="metric-label">Working</span>
           </div>
           <div className="metric-item">
             <span className="metric-num">{stats.resolved}</span>
@@ -143,25 +142,25 @@ function Dashboard() {
               className={`tab-btn ${statusFilter === "all" ? "active" : ""}`}
               onClick={() => setStatusFilter("all")}
             >
-              All <span className="tab-count">{tickets.length}</span>
+              All
             </button>
             <button
               className={`tab-btn ${statusFilter === "submitted" ? "active" : ""}`}
               onClick={() => setStatusFilter("submitted")}
             >
-              Open <span className="tab-count">{stats.submitted}</span>
+              Open
             </button>
             <button
               className={`tab-btn ${statusFilter === "in_progress" ? "active" : ""}`}
               onClick={() => setStatusFilter("in_progress")}
             >
-              In Progress <span className="tab-count">{stats.inProgress}</span>
+              Working
             </button>
             <button
               className={`tab-btn ${statusFilter === "resolved" ? "active" : ""}`}
               onClick={() => setStatusFilter("resolved")}
             >
-              Resolved <span className="tab-count">{stats.resolved}</span>
+              Resolved
             </button>
           </div>
 
@@ -170,7 +169,9 @@ function Dashboard() {
               <input
                 className="search-input-field"
                 type="text"
-                placeholder="Filter by title or ID..."
+                aria-label="Search by subject or ID"
+                placeholder="Search by subject or ID"
+                maxLength={LIMITS.search.max}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -249,7 +250,7 @@ function Dashboard() {
 
                   <div className="row-main">
                     <div className="row-title">{ticket.subject}</div>
-                    <div className="row-desc">{ticket.description}</div>
+                    <div className="row-desc">{ticket.problem}</div>
                   </div>
 
                   <div className="row-status">
@@ -279,7 +280,7 @@ function Dashboard() {
                       {getStatusBadge(ticket.status)}
                     </div>
                     <h3 className="grid-title">{ticket.subject}</h3>
-                    <p className="grid-desc">{ticket.description}</p>
+                    <p className="grid-desc">{ticket.problem}</p>
                   </div>
 
                   <div className="grid-card-bottom">

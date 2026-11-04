@@ -25,7 +25,7 @@ export default function Navbar() {
   };
 
   const isActive = (path) => {
-    if (path === "/dashboard" && location.pathname === "/dashboard") return true;
+    if (path === "/dashboard" && (location.pathname === "/dashboard" || location.pathname.startsWith("/tickets/"))) return true;
     if (path === "/create-ticket" && location.pathname === "/create-ticket") return true;
     if (path === "/track-ticket" && location.pathname === "/track-ticket") return true;
     return false;
@@ -39,6 +39,7 @@ export default function Navbar() {
           className="navbar-brand"
           onClick={() => navigate("/dashboard")}
         >
+          <span className="brand-icon" aria-hidden="true">LP</span>
           <span className="brand-title">Los Polos Hermanos</span>
         </div>
 
