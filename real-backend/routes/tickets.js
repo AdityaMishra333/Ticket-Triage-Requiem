@@ -5,15 +5,23 @@ const auth = require("../middleware/auth");
 const adminAuth = require("../middleware/adminAuth");
 const { emailCustomer, redraftReply } = require("../services/review");
 
+// Fields a customer may set; status, draftReply, category etc. are written by n8n / admins only
+const CUSTOMER_FIELDS = ["customerName", "subject", "item", "serviceDate", "problem", "yourEmail"];
+
 router.post("/", auth, async (req, res) => {
   try {
     const ticketId = "TKT-" + Date.now().toString(36).toUpperCase();
+    const fields = Object.fromEntries(
+      CUSTOMER_FIELDS.filter((key) => req.body[key] !== undefined).map((key) => [key, req.body[key]])
+    );
     const ticket = await Ticket.create({
-       ...req.body, ticketId, user: req.user?.id, 
-       statusHistory: [{ status: "new", 
+       ...fields, ticketId, user: req.user.id,
+       statusHistory: [{ status: "new",
         note: "Ticket submitted", actor: "customer" }] });
 
     try {
+      if (!process.env.N8N_WEBHOOK_URL) throw new Error("N8N_WEBHOOK_URL is not set");
+      // Timeout so a dead ngrok tunnel can't hang the request until Vercel kills the function
       await axios.post(process.env.N8N_WEBHOOK_URL, {
         ticketId: ticket.ticketId,
         "Customer Name": ticket.customerName,
@@ -24,13 +32,17 @@ router.post("/", auth, async (req, res) => {
         "Your Email": ticket.yourEmail,
         submittedAt: ticket.submittedAt,
         formMode: "web"
-      });
+      }, { timeout: 10000 });
     } catch (err) {
       console.error("n8n webhook failed:", err.message);
     }
 
     res.status(201).json({ ticket });
   } catch (err) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
+      return res.status(400).json({ message: "Please fill in all ticket fields correctly" });
+    }
+    console.error("Create ticket failed:", err);
     res.status(500).json({ message: "Failed to create ticket" });
   }
 });
