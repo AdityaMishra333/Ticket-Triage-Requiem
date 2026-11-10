@@ -1,0 +1,184 @@
+{
+  "name": "Ticket Triage - Daily Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        -16
+      ],
+      "id": "8d882b54-72e2-460d-af3e-89fe32351939",
+      "name": "Daily at 9 AM"
+    },
+    {
+      "parameters": {
+        "collection": "tickets",
+        "options": {},
+        "query": "={ \"$expr\": { \"$gte\": [ { \"$ifNull\": [ \"$submittedAt\", \"$createdAt\" ] }, { \"$dateFromString\": { \"dateString\": \"{{ $now.minus({ hours: 24 }).toISO() }}\" } } ] } }"
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.3,
+      "position": [
+        -416,
+        -16
+      ],
+      "id": "23d3af6a-71da-4abd-8b1e-70a98ec254b1",
+      "name": "Fetch last 24h tickets",
+      "credentials": {
+        "mongoDb": {
+          "id": "i8aaMawoHEq67xvC",
+          "name": "MongoDB account"
+        }
+      },
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const tickets = $input.all().map(i => i.json).filter(t => t && t._id);\nconst countBy = (key) => tickets.reduce((acc, t) => { const k = t[key] || 'unassigned'; acc[k] = (acc[k] || 0) + 1; return acc; }, {});\nconst fmt = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}: ${v}`).join(', ') || 'none';\nconst categories = countBy('category');\nconst departments = countBy('department');\nconst statuses = countBy('status');\nreturn [{ json: {\n  total: tickets.length,\n  categories, departments, statuses,\n  categoryText: fmt(categories), departmentText: fmt(departments), statusText: fmt(statuses),\n  resolved: statuses.resolved || 0,\n  awaitingApproval: statuses.awaiting_approval || 0,\n  escalated: tickets.filter(t => t.escalated === true).length,\n  highUrgency: tickets.filter(t => t.urgency === 'high').length,\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -16
+      ],
+      "id": "1fd08ff3-6398-45ce-83f5-7af2ac74df84",
+      "name": "Aggregate stats"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3.2:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.2:latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are writing a daily support report for a manager. The data covers tickets submitted in the last 24 hours.\n\nTotal tickets: {{ $json.total }}\nBy category: {{ $json.categoryText }}\nBy department: {{ $json.departmentText }}\nBy status: {{ $json.statusText }}\nResolved: {{ $json.resolved }}\nAwaiting approval: {{ $json.awaitingApproval }}\nEscalated (missed SLA): {{ $json.escalated }}\nHigh urgency: {{ $json.highUrgency }}\n\nWrite a short 3-4 line summary in plain text, no markdown. Mention the biggest concern, if any. If there were no tickets, say so in one line."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -16
+      ],
+      "id": "7b0d6e42-1e98-4c73-96f8-13cde4d08903",
+      "name": "Write summary",
+      "credentials": {
+        "ollamaApi": {
+          "id": "PDgVcKj9M3JFny1a",
+          "name": "Ollama account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "6335298769",
+        "text": "=Daily Ticket Report (last 24 hours)\n\nTotal: {{ $('Aggregate stats').item.json.total }}\nResolved: {{ $('Aggregate stats').item.json.resolved }} | Awaiting approval: {{ $('Aggregate stats').item.json.awaitingApproval }}\nEscalated: {{ $('Aggregate stats').item.json.escalated }} | High urgency: {{ $('Aggregate stats').item.json.highUrgency }}\nCategories: {{ $('Aggregate stats').item.json.categoryText }}\nDepartments: {{ $('Aggregate stats').item.json.departmentText }}\n\nSummary:\n{{ $json.content || 'AI summary unavailable today.' }}\n\nDashboard: https://ticket-triage-web.vercel.app/admin",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "5e6772f7-64c3-434a-9940-8b4ddfcd53f5",
+      "name": "Send digest to Telegram",
+      "webhookId": "b547a5d9-fe8e-4a23-9fa1-ed0bb3122dde",
+      "credentials": {
+        "telegramApi": {
+          "id": "Y7w7PGF5xikVpBLa",
+          "name": "Telegram account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Daily at 9 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch last 24h tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch last 24h tickets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate stats": {
+      "main": [
+        [
+          {
+            "node": "Write summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write summary": {
+      "main": [
+        [
+          {
+            "node": "Send digest to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "QxMxw8S60HTFpBkM",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "timezone": "Asia/Kolkata"
+  },
+  "pinData": {},
+  "active": false,
+  "tags": []
+}

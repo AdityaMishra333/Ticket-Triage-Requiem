@@ -1,4 +1,3 @@
-// Decode the JWT payload locally; the backend has no profile endpoint.
 export function getTokenPayload(token) {
   if (typeof token !== "string") return null;
   try {

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { isAdminToken } from "../utils/auth";
 
-// Shown to logged-in users on an unknown URL. Logged-out visitors go to the login page instead.
 function NotFound() {
   const navigate = useNavigate();
   const homePath = isAdminToken(localStorage.getItem("token")) ? "/admin" : "/dashboard";

@@ -19,6 +19,16 @@ const UserDetails = new mongoose.Schema({
     role : {
         type : String,
         default : "user"
+    },
+
+    failedLoginAttempts : {
+        type : Number,
+        default : 0
+    },
+
+    lockUntil : {
+        type : Date,
+        default : null
     }
 })
 

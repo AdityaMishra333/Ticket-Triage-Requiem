@@ -266,10 +266,6 @@
   .admin-detail-aside { grid-template-columns: 1fr; }
 }
 
-/* ==========================================================================
-   High-contrast colour overrides (colours only: no layout, size or behaviour changes).
-   Keep this block last so it wins over the lighter colours above.
-   ========================================================================== */
 .admin-shell {
   --admin-ink: #111111;
   --admin-muted: #555555;
@@ -277,7 +273,6 @@
   background: #f5f5f5;
 }
 
-/* Sidebar */
 .admin-sidebar { border-right-color: #e3e3e3; }
 .admin-brand,.admin-brand:hover { color: #111111; }
 .admin-brand-mark { background: #111111; }
@@ -298,7 +293,6 @@
 .admin-avatar,.admin-top-avatar { background: #eaeaea; color: #333333; }
 .admin-sidebar-footer > button { color: #3d3d3d; }
 
-/* Top bar and headings */
 .admin-topbar { border-bottom-color: #e3e3e3; }
 .admin-breadcrumb { color: #3d3d3d; }
 .admin-breadcrumb span { color: #6b6b6b; }
@@ -316,7 +310,6 @@
 .admin-demo-notice strong { color: #333333; }
 .admin-demo-notice div > span { color: #3d3d3d; }
 
-/* Cards and panels */
 .admin-stat-card,.admin-panel { border-color: #e3e3e3; box-shadow: 0 1px 3px rgba(23, 23, 23, 0.12); }
 .admin-stat-top { color: #3d3d3d; }
 .admin-stat-icon.blue { background: #eaeaea; color: #111111; }
@@ -331,7 +324,6 @@
 .admin-panel-heading p { color: #555555; }
 .admin-panel-menu { color: #555555; }
 
-/* Department chart */
 .department-chart-row { color: #222222; }
 .department-icon-1 { background: #eaeaea; color: #111111; }
 .department-icon-2 { background: #e2e2e2; color: #4a4a4a; }
@@ -347,7 +339,6 @@
 .department-chart-row > strong { color: #111111; }
 .admin-text-link { color: #333333; }
 
-/* Waiting for a reply */
 .attention-count { background: #e9e9e9; color: #4b4b4b; }
 .attention-ticket { border-bottom-color: #e3e3e3; }
 .attention-ticket-icon,.requester-cell > span { background: #eaeaea; color: #333333; }
@@ -355,7 +346,6 @@
 .attention-ticket-info small { color: #555555; }
 .attention-arrow { color: #555555; }
 
-/* Priority colours (also covers the "Medium" value used by the sample data) */
 .priority-dot { background: #6b6b6b; }
 .priority-high { background: #5c5c5c; }
 .priority-medium,.priority-normal { background: #949494; }
@@ -364,7 +354,6 @@
 .priority-text-medium,.priority-text-normal { color: #5e5e5e !important; }
 .priority-text-low { color: #4a4a4a !important; }
 
-/* Ticket table */
 .ticket-total-chip { background: #eaeaea; color: #333333; }
 .admin-ticket-controls { border-bottom-color: #e3e3e3; }
 .admin-status-tabs button { color: #3d3d3d; }
@@ -392,7 +381,6 @@
 .admin-page-footer { color: #555555; }
 .admin-page-footer span { color: #6b6b6b; }
 
-/* Status badges */
 .admin-status-new,
 .admin-status-classified,
 .admin-status-submitted { border-color: #aaaaaa; background: #e6e6e6; color: #3e3e3e; }
@@ -403,7 +391,6 @@
 .admin-status-resolved { border-color: #a8a8a8; background: #e4e4e4; color: #404040; }
 .admin-status-closed { border-color: #cfcfcf; background: #e2e2e2; color: #222222; }
 
-/* Ticket details page */
 .admin-back-link { color: #333333; }
 .admin-back-link:hover { color: #000000; }
 .admin-detail-id { color: #3d3d3d; }
@@ -431,24 +418,14 @@
 .admin-not-found > span { background: #eaeaea; color: #111111; }
 .admin-not-found p { color: #3d3d3d; }
 
-/* Top bar "Sign out" button (matches the user dashboard's Sign out) */
 .admin-signout-button { height: 30px; padding: 0 14px; border: 1px solid #cfcfcf; border-radius: 7px; background: #ffffff; color: #222222; font-size: 12px; font-weight: 600; transition: background .15s ease, border-color .15s ease, color .15s ease; }
 .admin-signout-button:hover { border-color: #b01e1e; background: #fdecec; color: #b01e1e; }
 .admin-signout-button:focus-visible { outline: 2px solid #111111; outline-offset: 2px; }
 
-/* Longer brand name ("Los Polos Hermanos"): keep it on one line inside the sidebar */
 .admin-brand { font-size: 15px; letter-spacing: -.4px; white-space: nowrap; }
 
-/* ==========================================================================
-   Admin sizes: scaled up to match the user dashboard (body ~13-14px, titles ~24-28px).
-   Sizes only (fonts, row heights, icon/avatar boxes): no element or position changes.
-   Rules that the small-screen media queries above also set (they hide text on narrow
-   screens) are wrapped in min-width queries, so those collapsed layouts keep working.
-   Keep this block last.
-   ========================================================================== */
 .admin-shell { font-size: 14px; }
 
-/* Sidebar */
 .admin-brand-mark { width: 32px; height: 32px; font-size: 17px; }
 .admin-workspace-icon { width: 34px; height: 34px; font-size: 14px; }
 .admin-workspace strong,.admin-sidebar-footer strong { font-size: 13px; }
@@ -464,7 +441,6 @@
   .admin-nav-item { min-height: 40px; font-size: 13.5px; }
 }
 
-/* Top bar */
 .admin-topbar { height: 64px; }
 .admin-breadcrumb,.admin-breadcrumb button { font-size: 13px; }
 .admin-signout-button { height: 34px; font-size: 13px; }
@@ -473,7 +449,6 @@
 }
 .admin-sample-pill > span { width: 7px; height: 7px; }
 
-/* Page heading and buttons */
 .admin-subtitle,.admin-detail-heading p { font-size: 14px; }
 .admin-export-button,.admin-filter-button { height: 38px; font-size: 13px; }
 .admin-export-button > span { font-size: 18px; }
@@ -485,7 +460,6 @@
   .admin-eyebrow { font-size: 11px; }
 }
 
-/* Stat cards and panel headings */
 .admin-stat-top { font-size: 13px; }
 .admin-stat-icon { width: 30px; height: 30px; font-size: 15px; }
 .admin-stat-card > strong { font-size: 28px; }
@@ -496,7 +470,6 @@
 .admin-panel-heading p { font-size: 12.5px; }
 .admin-panel-menu { font-size: 16px; }
 
-/* Department chart */
 .department-chart { gap: 12px; }
 .department-chart-row { grid-template-columns: 30px 130px minmax(50px, 1fr) 24px; gap: 12px; }
 .department-chart-icon { width: 28px; height: 28px; font-size: 10.5px; }
@@ -505,7 +478,6 @@
 .department-chart-row > strong { font-size: 13px; }
 .admin-text-link { font-size: 12.5px; }
 
-/* Waiting for a reply */
 .attention-count { min-width: 26px; height: 26px; font-size: 12px; }
 .attention-ticket { gap: 12px; padding: 12px 0; }
 .attention-ticket-icon,.requester-cell > span { width: 36px; height: 36px; font-size: 11px; }
@@ -514,7 +486,6 @@
 .attention-arrow { font-size: 20px; }
 .priority-dot { width: 8px; height: 8px; }
 
-/* Ticket table */
 .ticket-total-chip { min-width: 24px; height: 21px; font-size: 12px; }
 .admin-status-tabs { gap: 20px; }
 .admin-status-tabs button { height: 40px; gap: 7px; font-size: 13px; }
@@ -540,7 +511,6 @@
 .admin-table-footer { font-size: 12px; }
 .admin-page-footer { font-size: 12px; }
 
-/* Ticket details page */
 .admin-back-link { font-size: 14px; }
 .admin-detail-id { font-size: 13px; }
 .admin-detail-heading > .admin-status { font-size: 13px; }
@@ -566,11 +536,6 @@
 .admin-ai-note p { font-size: 13px; }
 .admin-not-found { font-size: 14px; }
 
-/* ==========================================================================
-   Tickets by department: plain list, same look as "Waiting for a reply"
-   (name and count). No icons or bars.
-   Keep this block last.
-   ========================================================================== */
 .department-chart { gap: 0; margin: 12px 0 8px; }
 .department-chart-row,
 .department-chart-row:hover { grid-template-columns: 1fr 28px; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--admin-line); color: #111111; }
@@ -578,7 +543,6 @@
 .department-chart-name { color: #111111; font-size: 13.5px; font-weight: 600; }
 .department-chart-row > strong { color: #111111; font-size: 13.5px; }
 
-/* All tickets table: neutral colors, no dots */
 .admin-ticket-table .department-cell i,
 .admin-ticket-table .priority-label .priority-dot,
 .admin-ticket-table .admin-status > i { display: none; }
@@ -586,11 +550,9 @@
 .admin-ticket-table .admin-status { border-color: #e3e3e3; background: #fafafa; color: #3d3d3d; }
 .admin-ticket-panel .requester-cell > span { background: #f1f1f1; color: #3d3d3d; }
 
-/* Inline validation in the admin ticket editor */
 .admin-edit-field .field-error { margin-top: 4px; color: #991b1b; font-size: 11px; line-height: 1.4; }
 .admin-edit-field select[aria-invalid="true"] { border-color: #f87171; }
 
-/* Soft status badges, shared with the customer pages */
 .admin-status-new,
 .admin-status-classified,
 .admin-status-submitted { border-color: var(--status-submitted-border); background: var(--status-submitted-bg); color: var(--status-submitted-text); }
@@ -601,10 +563,8 @@
 .admin-status-resolved { border-color: var(--status-resolved-border); background: var(--status-resolved-bg); color: var(--status-resolved-text); }
 .admin-status-closed { border-color: var(--status-closed-border); background: var(--status-closed-bg); color: var(--status-closed-text); }
 
-/* Neutral statuses in the table stay as they were: keep this after the badges above */
 .admin-ticket-table .admin-status { border-color: #e3e3e3; background: #fafafa; color: #3d3d3d; }
 
-/* Sidebar stays in view; values read as words, not raw lowercase data */
 .admin-sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .admin-brand-period { display: none; }
 .admin-ticket-table .priority-label,
@@ -615,7 +575,6 @@
 .admin-brand-mark { font-size: 12px; letter-spacing: .02em; }
 .admin-signout-button { white-space: nowrap; }
 
-/* Phones: panels stay inside the screen; wide tables scroll inside their own panel */
 .admin-panel,.admin-stat-card { min-width: 0; }
 @media (max-width: 760px) {
   .admin-middle-grid { grid-template-columns: minmax(0, 1fr); }
@@ -645,7 +604,6 @@
 .admin-ticket-table .admin-status { border-color: #e3e3e3; background: #fafafa; color: #3d3d3d; }
 .admin-ai-note { background: #f1f1f1; border-color: #e3e3e3; }
 
-/* Soft look: white sidebar, light lines, more room */
 .admin-sidebar { border-right-color: #111111; background: #111111; color: #ffffff; }
 .admin-brand,.admin-brand:hover { color: #ffffff; }
 .admin-brand-mark { background: #ffffff; color: #111111; }
@@ -678,18 +636,15 @@
 .admin-ticket-table td { height: 68px; border-top-color: #eeeeee; }
 .admin-table-footer { padding: 14px 22px; border-top-color: #e8e8e8; }
 
-/* Inputs: soft, but still easy to see on white */
 .admin-search,.admin-ticket-filters select,.admin-edit-field select { border-color: #949494; }
 .admin-edit-field select[aria-invalid="true"] { border-color: #dc2626; }
 
-/* Admin containers: clearly visible, light black edge */
 .admin-stat-card,
 .admin-panel,
 .admin-ai-note,
 .admin-not-found { border-color: #6b6b6b; }
 .admin-topbar { border-bottom-color: #6b6b6b; }
 
-/* Admin Dashboard title in the top bar, moved here from the sidebar */
 .admin-topbar-title { display: flex; align-items: center; gap: 10px; color: #111111; font-size: 14px; font-weight: 650; }
 .admin-brand + .admin-nav-label { margin-top: 28px; }
 @media (max-width: 480px) {
@@ -697,13 +652,137 @@
 }
 .admin-topbar:has(.admin-topbar-title) { justify-content: space-between; }
 
-/* Ticket loading screen: no box, light text */
 .admin-not-found.admin-loading { border: 0; background: transparent; }
 .admin-not-found.admin-loading h1 { margin-top: 0; color: #6b6b6b; font-size: 15px; font-weight: 300; letter-spacing: 0; }
 
-/* Ticket information: status and category values, capitalized like the other fields */
 .admin-info-status { text-transform: capitalize; }
 
-/* Ticket updates: every listed update is complete, so all dots are solid with a darker line */
 .admin-timeline-marker { border-color: #111111; background: #111111; }
 .admin-timeline-event:not(:last-child)::before { border-left-color: #8a8a8a; }
+
+/* ===== Mobile responsiveness ===== */
+@media (max-width: 760px) {
+  /* Sidebar becomes a top navigation bar */
+  .admin-shell { flex-direction: column; }
+  .admin-shell .admin-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 15px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid #111111;
+  }
+  .admin-shell .admin-brand { flex: 1 0 100%; padding: 0; }
+  .admin-shell .admin-brand > span:last-child { display: inline; }
+  .admin-shell .admin-nav-label,
+  .admin-shell .admin-sidebar-footer { display: none; }
+  .admin-shell .admin-sidebar .admin-nav-item {
+    display: inline-flex;
+    width: auto;
+    min-height: 34px;
+    margin: 0;
+    padding: 0 12px;
+    gap: 8px;
+    border: 1px solid #333333;
+    border-radius: 999px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .admin-shell .admin-sidebar .admin-nav-item > span:first-child { width: auto; font-size: 12px; }
+
+  /* Topbar */
+  .admin-topbar { height: 56px; padding: 0 15px; gap: 10px; }
+  .admin-topbar-title { min-width: 0; font-size: 13.5px; }
+  .admin-topbar-title > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-breadcrumb { min-width: 0; }
+  .admin-breadcrumb strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-top-actions { gap: 10px; flex-shrink: 0; }
+
+  /* Main content */
+  .admin-content { padding: 20px 15px 16px; }
+  .admin-page-heading { margin-bottom: 20px; }
+  .admin-stat-grid,
+  .admin-middle-grid { gap: 12px; margin-bottom: 16px; }
+  .admin-stat-card { padding: 14px; }
+  .admin-stat-card > strong { font-size: 24px; }
+  .admin-panel { padding: 16px; }
+  .admin-ticket-panel { padding: 0; }
+  .ticket-panel-heading { padding: 16px 16px 12px; }
+  .admin-ticket-controls { padding: 0 16px 12px; }
+  .admin-status-tabs { width: 100%; gap: 16px; }
+  .admin-status-tabs::-webkit-scrollbar { display: none; }
+  .admin-ticket-filters { width: 100%; }
+  .admin-search input { font-size: 16px; }
+  .admin-ticket-filters select { flex: 1; max-width: none; }
+  .admin-ticket-table th:first-child,
+  .admin-ticket-table td:first-child { padding-left: 16px; }
+  .admin-table-footer { padding: 12px 16px; }
+  .admin-page-footer { padding-top: 12px; }
+
+  /* Ticket details */
+  .admin-detail-content { padding-top: 18px; }
+  .admin-back-link { margin-bottom: 14px; }
+  .admin-detail-heading h1 { font-size: 20px; overflow-wrap: anywhere; }
+  .admin-detail-description > p { overflow-wrap: anywhere; }
+  .admin-detail-grid,
+  .admin-detail-main,
+  .admin-detail-aside { gap: 12px; }
+  .admin-edit-actions { flex-wrap: wrap; }
+  .admin-edit-actions > button { flex: 1 1 auto; }
+  .admin-edit-field select { font-size: 16px; }
+  .admin-not-found { padding: 24px 18px; }
+}
+
+@media (max-width: 640px) {
+  /* Ticket table turns into stacked cards */
+  .admin-table-scroll { overflow-x: visible; }
+  .admin-ticket-table,
+  .admin-ticket-table tbody { display: block; white-space: normal; }
+  .admin-ticket-table thead { display: none; }
+  .admin-ticket-table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 14px 16px;
+    border-top: 1px solid #eeeeee;
+  }
+  .admin-ticket-table td,
+  .admin-ticket-table td:first-child { display: block; height: auto; padding: 0; border-top: 0; }
+  .admin-ticket-table td:first-child { flex: 1 0 100%; }
+  .admin-ticket-table td:first-child strong { max-width: none; white-space: normal; overflow-wrap: anywhere; }
+  .admin-ticket-table .requester-cell > span { width: 26px; height: 26px; font-size: 9.5px; }
+  .admin-ticket-table td.submitted-cell { flex: 1 0 100%; font-size: 12px; }
+  .admin-ticket-table td.table-arrow { display: none; }
+}
+
+@media (max-width: 600px) {
+  .admin-detail-aside { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .admin-topbar-title .admin-workspace-icon,
+  .admin-top-avatar { display: none; }
+  .admin-signout-button { height: 32px; padding: 0 12px; font-size: 12.5px; }
+  .admin-page-heading h1 { font-size: 21px; }
+  .admin-stat-grid { gap: 10px; }
+  .admin-stat-card { padding: 12px; }
+  .admin-stat-top { font-size: 12px; }
+  .admin-stat-card > strong { font-size: 22px; }
+  .admin-stat-card > small { font-size: 11.5px; }
+  .attention-ticket { gap: 10px; }
+  .attention-ticket-icon { width: 32px; height: 32px; }
+  .admin-ticket-filters { flex-direction: column; }
+  .admin-search,
+  .admin-ticket-filters select { width: 100%; }
+}
+
+@media (max-width: 360px) {
+  .admin-stat-grid { grid-template-columns: 1fr; }
+}

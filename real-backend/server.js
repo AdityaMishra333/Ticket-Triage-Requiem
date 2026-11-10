@@ -11,14 +11,16 @@ const adminAuthRoutes = require("./routes/adminAuth")
 const app = express()
 const PORT = process.env.PORT || 5000
 
-// CORS_ORIGINS: comma-separated frontend URLs for production, e.g. https://my-app.vercel.app
+// Behind Vercel's proxy, trust one hop so rate limiting sees the real client IP.
+// Locally there is no proxy, so X-Forwarded-For is not trusted (can't be spoofed).
+if (process.env.VERCEL) app.set("trust proxy", 1)
+
 const allowedOrigins = [
     "http://localhost:5173",
     "http://10.71.3.224:5173",
     ...(process.env.CORS_ORIGINS || "").split(",").map((origin) => origin.trim().replace(/\/$/, "")).filter(Boolean)
 ]
 
-// On Vercel each instance handles many requests, so reuse one connection and retry if it failed
 let connection
 const connectDb = () => {
     connection ??= mongoose.connect(process.env.MONGO_URI).catch((err) => {
@@ -45,7 +47,6 @@ app.use("/api/auth", userAuthRoutes)
 app.use("/api/admin", adminAuthRoutes)
 app.use("/api/tickets", require("./routes/tickets"))
 
-// Local: `node server.js` starts a server. Vercel imports the exported app instead.
 if (require.main === module) {
     connectDb().then(() => {
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

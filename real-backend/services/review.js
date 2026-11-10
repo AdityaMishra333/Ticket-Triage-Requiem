@@ -1,10 +1,6 @@
 const axios = require("axios");
 const nodemailer = require("nodemailer");
 
-// Side effects of the admin approve / reject buttons. Both are best-effort:
-// the caller logs failures and the status change still goes through.
-
-// Approve: email the customer (needs SMTP_USER / SMTP_PASS, a Gmail app password)
 async function emailCustomer(ticket) {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     throw new Error("SMTP_USER / SMTP_PASS not set");
@@ -22,7 +18,6 @@ async function emailCustomer(ticket) {
   });
 }
 
-// Reject: ask Ollama for a different reply (same prompt the old workflow 2 used)
 async function redraftReply(ticket) {
   const url = process.env.OLLAMA_URL || "http://localhost:11434";
   const { data } = await axios.post(`${url}/api/chat`, {

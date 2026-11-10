@@ -1,15 +1,30 @@
 const router = require("express").Router()
 const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
 const UserDetails = require("../models/user")
+const { authLimiter } = require("../middleware/rateLimit")
+const { login } = require("../services/login")
 
 const isFilled = (value) => typeof value === "string" && value.trim() !== ""
 
-router.post('/create', async (req, res) => {
+// At least 8 characters with a lowercase letter, an uppercase letter and a number.
+// bcrypt ignores everything past 72 bytes, so longer passwords are rejected.
+const passwordError = (password) => {
+    if (password.length < 8) return "Password must be at least 8 characters."
+    if (Buffer.byteLength(password, "utf8") > 72) return "Password must be at most 72 characters."
+    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password))
+        return "Password must include an uppercase letter, a lowercase letter and a number."
+    return ""
+}
+
+router.post('/create', authLimiter, async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        // Only these fields are read from the body; role is always "user".
+        const { name, email, password } = req.body || {}
         if (!isFilled(name) || !isFilled(email) || !isFilled(password))
             return res.status(400).json({ message: "name, email and password are required" })
+
+        const weak = passwordError(password)
+        if (weak) return res.status(400).json({ message: weak })
 
         const normalizedEmail = email.trim().toLowerCase()
         const existing = await UserDetails.findOne({ email: normalizedEmail })
@@ -17,7 +32,7 @@ router.post('/create', async (req, res) => {
             return res.status(409).json({ message: "email already registered" })
 
         const hash = await bcrypt.hash(password, 10)
-        await UserDetails.create({ name: name.trim(), email: normalizedEmail, password: hash })
+        await UserDetails.create({ name: name.trim(), email: normalizedEmail, password: hash, role: "user" })
 
         res.status(201).send("user registered")
     }
@@ -27,20 +42,9 @@ router.post('/create', async (req, res) => {
     }
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
     try {
-        const { email, password } = req.body
-        if (!isFilled(email) || !isFilled(password))
-            return res.status(400).send("email and password are required")
-
-        const user = await UserDetails.findOne({ email: email.trim().toLowerCase() })
-        if (!user) return res.status(404).send("user not found")
-
-        const match = user.password && await bcrypt.compare(password, user.password)
-        if (!match) return res.status(401).send("incorrect password")
-
-        const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET, {expiresIn: '7d'})
-        res.json({token})
+        await login(UserDetails, "user", req, res)
     } catch (err) {
         console.error("Login failed:", err)
         res.status(500).json({ message: "something went wrong" })

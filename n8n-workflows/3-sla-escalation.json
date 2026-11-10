@@ -1,0 +1,297 @@
+{
+  "name": "Ticket Triage - Complaint-Sheduling",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        -64
+      ],
+      "id": "73339e62-0d9a-4bd2-893e-a13d1323012b",
+      "name": "Every minute SLA check"
+    },
+    {
+      "parameters": {
+        "collection": "tickets",
+        "options": {},
+        "query": "{ \"status\": \"awaiting_approval\", \"escalated\": { \"$ne\": true } }"
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "71e6dcf7-bf87-458c-8b24-289749f563d5",
+      "name": "Find overdue tickets",
+      "credentials": {
+        "mongoDb": {
+          "id": "i8aaMawoHEq67xvC",
+          "name": "MongoDB account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8d683ac8-7f27-4e88-a069-d1bd78fd57ca",
+              "leftValue": "={{ (Date.now() - new Date($json.submittedAt || $json.createdAt).getTime()) / 60000 }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -64
+      ],
+      "id": "15f4df22-bcd5-4d90-95b2-9b9010fb3c02",
+      "name": "Older than SLA limit?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98b9c019-69b5-4e19-a239-038ff0487448",
+              "name": "_id",
+              "value": "={{ $json._id.toString() }}",
+              "type": "string"
+            },
+            {
+              "id": "e111419c-dfb4-4faf-ab71-a292dedb446d",
+              "name": "escalated",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "e9604a3c-d2f4-4b5a-a641-5a66d9966379",
+              "name": "urgency",
+              "value": "high",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -64
+      ],
+      "id": "587e85b8-51b1-4519-b07e-72baac43a974",
+      "name": "Escalate priority"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "tickets",
+        "updateKey": "_id",
+        "fields": "escalated,urgency",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.3,
+      "position": [
+        860,
+        -64
+      ],
+      "id": "cc06b2a0-0736-4675-8478-3f45602f3879",
+      "name": "Update ticket in DB",
+      "credentials": {
+        "mongoDb": {
+          "id": "i8aaMawoHEq67xvC",
+          "name": "MongoDB account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('Older than SLA limit?').all().map(({ json: t }) => {\n  const history = (t.statusHistory || []).map(({ status, note, actor, updatedAt }) => ({ status, note, actor, updatedAt }));\n  history.push({ status: t.status, note: 'Escalated to high urgency: not approved within the SLA limit', actor: 'system', updatedAt: new Date().toISOString() });\n  return { json: { _id: t._id.toString(), statusHistory: history } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        -160
+      ],
+      "id": "8092ac80-09d9-4c77-b679-334a1d23fdb7",
+      "name": "Log escalation"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "tickets",
+        "updateKey": "_id",
+        "fields": "statusHistory",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.3,
+      "position": [
+        1300,
+        -160
+      ],
+      "id": "bdfb6c38-9469-453f-acec-f0e12e60c8a3",
+      "name": "Save history (escalated)",
+      "credentials": {
+        "mongoDb": {
+          "id": "i8aaMawoHEq67xvC",
+          "name": "MongoDB account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "chatId": "6335298769",
+        "text": "=SLA alert: ticket escalated to HIGH urgency\nTicket: {{ $('Older than SLA limit?').item.json.ticketId }}\nCustomer: {{ $('Older than SLA limit?').item.json.customerName }}\nCategory: {{ $('Older than SLA limit?').item.json.category }} | Department: {{ $('Older than SLA limit?').item.json.department }}\nWaiting for approval since: {{ $('Older than SLA limit?').item.json.submittedAt || $('Older than SLA limit?').item.json.createdAt }}\n\nReview: https://ticket-triage-web.vercel.app/admin/tickets/{{ $('Escalate priority').item.json._id }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        48
+      ],
+      "id": "481c3898-ec86-4661-a29c-1bce24010f53",
+      "name": "Alert team on Telegram",
+      "webhookId": "8fe94a73-9b67-45d5-8d71-7be035ad1892",
+      "credentials": {
+        "telegramApi": {
+          "id": "Y7w7PGF5xikVpBLa",
+          "name": "Telegram account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Every minute SLA check": {
+      "main": [
+        [
+          {
+            "node": "Find overdue tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find overdue tickets": {
+      "main": [
+        [
+          {
+            "node": "Older than SLA limit?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Older than SLA limit?": {
+      "main": [
+        [
+          {
+            "node": "Escalate priority",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Escalate priority": {
+      "main": [
+        [
+          {
+            "node": "Update ticket in DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update ticket in DB": {
+      "main": [
+        [
+          {
+            "node": "Log escalation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Alert team on Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log escalation": {
+      "main": [
+        [
+          {
+            "node": "Save history (escalated)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "QxMxw8S60HTFpBkM",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "timezone": "Asia/Kolkata"
+  },
+  "pinData": {},
+  "active": false,
+  "tags": []
+}

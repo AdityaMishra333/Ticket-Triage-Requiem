@@ -2,12 +2,9 @@ import { Fragment, useEffect, useState } from "react";
 
 const HEADLINE_WORDS = "Every support request, routed to the right team.".split(" ");
 
-// Resets on refresh or a new visit, because the whole app reloads
 let introPlayed = false;
 
-// Shared frame for the sign-in and sign-up pages: brand panel on the left, form on the right.
 function AuthLayout({ className = "", children }) {
-  // The side panel intro plays once per page load, not when moving between sign-in and sign-up
   const [playIntro] = useState(() => !introPlayed);
   useEffect(() => {
     introPlayed = true;

@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import { statusLabel } from "../utils/validation";
 import { normalizeTicket } from "../utils/normalizeTicket";
 
-// How often an open ticket checks for new activity from n8n or an admin
 const REFRESH_MS = 20000;
 
 function TicketDetails() {
@@ -107,7 +106,6 @@ function TicketDetails() {
           </div>
         ) : (
           <div className="details-layout">
-            {/* Main Details Panel */}
             <div>
               <div className="content-panel">
                 <div className="ticket-header-block">
@@ -124,7 +122,6 @@ function TicketDetails() {
                 </div>
               </div>
 
-              {/* Activity Log */}
               <div className="content-panel">
                 <div className="section-subhead">Activity & Status History</div>
 
@@ -159,7 +156,6 @@ function TicketDetails() {
               </div>
             </div>
 
-            {/* Sidebar Meta Panel */}
             <div>
               <div className="content-panel">
                 <div className="section-subhead">Ticket Information</div>
@@ -208,7 +204,6 @@ function TicketDetails() {
                     </div>
                   </div>
                 )}
-
 
               </div>
             </div>

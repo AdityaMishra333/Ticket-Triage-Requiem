@@ -1,5 +1,3 @@
-// Fills in values the ticket pages rely on, because tickets saved by the backend may not have
-// them yet (department, urgency and category are written later by the triage workflow).
 export function normalizeTicket(ticket) {
   const status = !ticket.status || ticket.status === "pending" ? "new" : ticket.status;
   return {

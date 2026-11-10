@@ -4,7 +4,6 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Read stored user details if available
   let username = "My Account";
   let initials = "ME";
   try {
@@ -15,7 +14,7 @@ export default function Navbar() {
       initials = (username.slice(0, 2) || "ME").toUpperCase();
     }
   } catch {
-    // fallback
+    localStorage.removeItem("user");
   }
 
   const handleLogout = () => {
@@ -34,7 +33,6 @@ export default function Navbar() {
   return (
     <header className="app-navbar">
       <div className="navbar-container">
-        {/* Brand */}
         <div
           className="navbar-brand"
           onClick={() => navigate("/dashboard")}
@@ -43,7 +41,6 @@ export default function Navbar() {
           <span className="brand-title">Los Polos Hermanos</span>
         </div>
 
-        {/* Center navigation */}
         <nav className="navbar-nav">
           <button
             type="button"
@@ -70,7 +67,6 @@ export default function Navbar() {
           </button>
         </nav>
 
-        {/* User & Sign out */}
         <div className="navbar-user">
           <div className="user-badge" title={username}>
             <div className="user-avatar-circle">{initials}</div>

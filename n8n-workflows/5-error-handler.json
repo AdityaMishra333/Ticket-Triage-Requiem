@@ -35,7 +35,6 @@
       }
     }
   ],
-  "pinData": {},
   "connections": {
     "Cause of error": {
       "main": [
@@ -49,17 +48,12 @@
       ]
     }
   },
-  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "availableInMCP": true
   },
-  "versionId": "b1f2c012-baad-4fb2-98d5-d7f309a374f5",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "a6c952d8d191187d9b11c6a3b097e77b902efc7e4d72d526142941b472153203"
-  },
-  "nodeGroups": [],
-  "id": "QxMxw8S60HTFpBkM",
+  "pinData": {},
+  "active": false,
   "tags": []
 }

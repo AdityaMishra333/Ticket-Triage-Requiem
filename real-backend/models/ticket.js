@@ -55,7 +55,6 @@ const TicketDetails = new mongoose.Schema({
         default : Date.now
     },
 
-    // written by n8n
     draftReply : {
         type : String
     },
@@ -70,14 +69,14 @@ const TicketDetails = new mongoose.Schema({
         ref : "User"
     },
 
-    department : { 
+    department : {
         type : String
      },
 
     statusHistory : [{
       status : String,
       note : String,
-      actor : String,          // "system" | "customer" | "admin"
+      actor : String,
       updatedAt : { type : Date, default : Date.now }
 }],
 }, { timestamps : true })

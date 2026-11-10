@@ -7,26 +7,20 @@ import FieldError from "../components/FieldError";
 import AuthLayout from "../components/AuthLayout";
 import { getTokenPayload, isAdminToken } from "../utils/auth";
 
-// Shared login page for BOTH users and admins.
-// The User / Admin toggle only changes the look and adds an admin-only check;
-// both modes call the same backend endpoint (POST /auth/login).
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Register redirects here with a prefilled email and a "Account created" message
   const [email, setEmail] = useState(location.state?.email || "");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [notice, setNotice] = useState(location.state?.message || "");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // false = User login (default), true = Admin login
   const [isAdminMode, setIsAdminMode] = useState(false);
   const { errors, recheckField, checkAll, clearErrors, fieldProps } = useFieldErrors(loginValidators);
   const values = { email, password };
 
-  // Called by the User / Admin toggle buttons; also clears any old error message
   const switchLoginMode = (adminMode) => {
     setIsAdminMode(adminMode);
     setMessage("");
@@ -34,13 +28,11 @@ function Login() {
     clearErrors();
   };
 
-  // Runs for both user and admin sign in
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setNotice("");
 
-    // Client-side validation before calling the backend
     if (!checkAll(values)) return;
     const normalizedEmail = email.trim();
 
@@ -58,20 +50,16 @@ function Login() {
       }
 
       const role = getTokenPayload(token)?.role;
-      // ADMIN ONLY: in Admin mode, reject accounts whose token role is not admin
       if (isAdminMode && !isAdminToken(token)) {
         setMessage("This account doesn't have administrator access.");
         return;
       }
 
-      // Save the session (used later by AuthValidator and the API calls)
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify({ email: normalizedEmail.toLowerCase(), role }));
 
-      // Admin token -> admin dashboard, everyone else -> user dashboard
       navigate(isAdminToken(token) ? "/admin" : "/dashboard");
     } catch (error) {
-      // Show the backend's message if there is one, otherwise a generic error
       console.error(error);
       const data = error.response?.data;
       setMessage(
@@ -87,9 +75,7 @@ function Login() {
   return (
     <AuthLayout className={isAdminMode ? "admin-login-mode" : ""}>
       <div className="auth-card">
-        {/* User / Admin toggle. The sliding pill is pure CSS (see .login-mode-toggle in index.css) */}
         <div className="login-mode-toggle" role="group" aria-label="Choose login type">
-          {/* USER mode button */}
           <button
             type="button"
             className={!isAdminMode ? "active" : ""}
@@ -98,7 +84,6 @@ function Login() {
           >
             User
           </button>
-          {/* ADMIN mode button */}
           <button
             type="button"
             className={isAdminMode ? "active" : ""}
@@ -108,7 +93,6 @@ function Login() {
             Admin
           </button>
         </div>
-        {/* Header: icon, title and subtitle change depending on the mode */}
         <div className="auth-header">
           <h1>{isAdminMode ? "Admin Sign In" : "Sign In To Los Polos Hermanos"}</h1>
           <p>
@@ -172,7 +156,6 @@ function Login() {
             <FieldError name="password" message={errors.password} />
           </div>
 
-          {/* Error / info message (validation, wrong password, not an admin, ...) */}
           {notice && (
             <div className="form-feedback info" role="status" style={{ marginBottom: "16px" }}>
               <span>{notice}</span>
@@ -185,7 +168,6 @@ function Login() {
             </div>
           )}
 
-          {/* Submit button label: ADMIN -> "Admin sign in", USER -> "Sign in" */}
           <button
             type="submit"
             className="btn-primary auth-submit"
@@ -194,7 +176,6 @@ function Login() {
             {submitting ? "Signing in..." : isAdminMode ? "Admin Sign In" : "Sign in"}
           </button>
 
-          {/* USER: link to the Register page. ADMIN: plain label, since admins can't sign up here */}
           <div className="auth-footer-links">
             {isAdminMode ? (
               "You Cannot Create An Admin Account"

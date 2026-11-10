@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import { LIMITS, statusLabel } from "../utils/validation";
 import { normalizeTicket } from "../utils/normalizeTicket";
 
-// n8n statuses: new -> classified -> awaiting_approval -> resolving (redraft) / resolved
 const OPEN_STATUSES = ["new", "classified", "awaiting_approval"];
 const IN_PROGRESS_STATUSES = ["resolving", "in_progress"];
 
@@ -16,7 +15,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [viewMode, setViewMode] = useState("list"); // "list" | "grid"
+  const [viewMode, setViewMode] = useState("list");
 
   useEffect(() => {
     let ignore = false;
@@ -45,7 +44,6 @@ function Dashboard() {
     };
   }, [navigate]);
 
-  // Compute stats
   const stats = useMemo(() => {
     const total = tickets.length;
     const submitted = tickets.filter((t) => OPEN_STATUSES.includes(t.status)).length;
@@ -55,7 +53,6 @@ function Dashboard() {
     return { total, submitted, inProgress, resolved };
   }, [tickets]);
 
-  // Filtered tickets
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
       const q = searchQuery.toLowerCase().trim();
@@ -100,7 +97,6 @@ function Dashboard() {
       <Navbar />
 
       <main className="dashboard-page">
-        {/* Header */}
         <div className="dashboard-header-row">
           <div>
             <h1>My Tickets</h1>
@@ -115,7 +111,6 @@ function Dashboard() {
           </button>
         </div>
 
-        {/* Subtle metrics ribbon */}
         <section className="metrics-ribbon">
           <div className="metric-item">
             <span className="metric-num">{stats.total}</span>
@@ -135,7 +130,6 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Toolbar & Filters */}
         <section className="dashboard-toolbar">
           <div className="filter-tabs">
             <button
@@ -194,7 +188,6 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Tickets Content */}
         <section>
           {loading ? (
             <div className="ticket-list-table">

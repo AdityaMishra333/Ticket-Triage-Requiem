@@ -8,49 +8,49 @@
             {
               "id": "44260992-e072-443c-b04a-b20c2bccc2af",
               "name": "customerName",
-              "value": "={{ $json['Customer Name'] }}",
+              "value": "={{ $json.body['Customer Name'] }}",
               "type": "string"
             },
             {
               "id": "d582dab4-3fe3-4493-84fd-08c69d688e06",
               "name": "problem",
-              "value": "={{ $json.Problem }}",
+              "value": "={{ $json.body.Problem }}",
               "type": "string"
             },
             {
               "id": "5aa0ef9c-23b0-46cc-a5f5-28c4edc693f2",
               "name": "item",
-              "value": "={{ $json.Item }}",
+              "value": "={{ $json.body.Item }}",
               "type": "string"
             },
             {
               "id": "6c9c5f43-5ddc-4f0e-b478-70279b3c1a38",
               "name": "serviceDate",
-              "value": "={{ $json['Service Date'] }}",
+              "value": "={{ $json.body['Service Date'] }}",
               "type": "string"
             },
             {
               "id": "f5e7c18a-af1a-46fa-9012-5c91f210bef3",
               "name": "yourEmail",
-              "value": "={{ $json['Your Email'] }}",
+              "value": "={{ $json.body['Your Email'] }}",
               "type": "string"
             },
             {
               "id": "507df262-e8a7-46e0-9cd9-7220e8be8648",
               "name": "submittedAt",
-              "value": "={{ $json.submittedAt }}",
+              "value": "={{ $json.body.submittedAt }}",
               "type": "string"
             },
             {
               "id": "9b309479-7e46-4736-93a0-cf0d8de244ee",
               "name": "formMode",
-              "value": "={{ $json.formMode }}",
+              "value": "={{ $json.body.formMode }}",
               "type": "string"
             },
             {
-              "id": "9cf95cc9-c34d-4b8e-b73f-12775b4f14f2",
-              "name": "status",
-              "value": "new",
+              "id": "a1b2c3d4-0001-4000-8000-000000000001",
+              "name": "ticketId",
+              "value": "={{ $json.body.ticketId }}",
               "type": "string"
             }
           ]
@@ -60,27 +60,26 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -128,
-        -272
+        1200,
+        240
       ],
-      "id": "57df27b9-a610-4da4-90fa-888756596abf",
+      "id": "495b552d-b1a6-4bec-a541-603aebc92fb3",
       "name": "Build ticket record"
     },
     {
       "parameters": {
-        "operation": "insert",
         "collection": "tickets",
-        "fields": "=customerName,problem,item,serviceDate,yourEmail,status,submittedAt",
-        "options": {}
+        "options": {},
+        "query": "={ \"ticketId\": \"{{ $('Build ticket record').item.json.ticketId }}\" }"
       },
       "type": "n8n-nodes-base.mongoDb",
       "typeVersion": 1.3,
       "position": [
-        -64,
-        208
+        1424,
+        240
       ],
-      "id": "6831c161-6c36-42e8-a02d-bcf982b36487",
-      "name": "Save ticket to DB",
+      "id": "0c2fed09-eb46-446b-978a-ae79434536d0",
+      "name": "Find ticket",
       "credentials": {
         "mongoDb": {
           "id": "i8aaMawoHEq67xvC",
@@ -92,14 +91,14 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "qwen2.5:latest",
+          "value": "llama3.2:latest",
           "mode": "list",
-          "cachedResultName": "qwen2.5:latest"
+          "cachedResultName": "llama3.2:latest"
         },
         "messages": {
           "values": [
             {
-              "content": "=Classify this complaint into ONE category: billing, technical, account, delivery, or other. Also rate urgency: high, medium, or low.\n\nComplaint: {{ $json.problem }}\nItem: {{ $json.item }}\n\nReply ONLY with JSON, nothing else:\n{\"category\": \"...\", \"urgency\": \"...\"}"
+              "content": "=Classify this complaint into ONE category: billing, technical, account, delivery, or other. Rate urgency: high, medium, or low. Also pick the ONE department that should handle it: IT, Facilities, HR, Finance, or Customer Support.\n\nComplaint: {{ $('Build ticket record').item.json.problem }}\nItem: {{ $('Build ticket record').item.json.item }}\n\nReply ONLY with JSON, nothing else:\n{\"category\": \"...\", \"urgency\": \"...\", \"department\": \"...\"}"
             }
           ]
         },
@@ -108,10 +107,10 @@
       "type": "@n8n/n8n-nodes-langchain.ollama",
       "typeVersion": 1,
       "position": [
-        16,
-        -32
+        1648,
+        240
       ],
-      "id": "185b6c44-fb99-4473-aa74-db7a9912d955",
+      "id": "61e54f2b-b6ee-4405-9632-5a4b9fb0c014",
       "name": "Classify ticket",
       "credentials": {
         "ollamaApi": {
@@ -127,13 +126,13 @@
             {
               "id": "aa0df5d4-4338-4803-8adc-7354ba33a20b",
               "name": "category",
-              "value": "={{ JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()).category }}",
+              "value": "={{ String((() => { try { return JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()); } catch (e) { return {}; } })().category || 'other').toLowerCase() }}",
               "type": "string"
             },
             {
               "id": "2221142d-16db-4186-ab73-316cf356a93b",
               "name": "urgency",
-              "value": "={{ JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()).urgency }}",
+              "value": "={{ ['high','medium','low'].includes(String((() => { try { return JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()); } catch (e) { return {}; } })().urgency || '').toLowerCase()) ? String((() => { try { return JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()); } catch (e) { return {}; } })().urgency).toLowerCase() : 'medium' }}",
               "type": "string"
             },
             {
@@ -145,7 +144,13 @@
             {
               "id": "622a25aa-9909-4099-9db5-3e67fd085ee0",
               "name": "_id",
-              "value": "={{ $('Save ticket to DB').item.json._id.toString() }}",
+              "value": "={{ $('Find ticket').item.json._id.toString() }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0002-4000-8000-000000000002",
+              "name": "department",
+              "value": "={{ (() => { const d = (() => { try { return JSON.parse($json.content.replace(/```json/g,'').replace(/```/g,'').trim()); } catch (e) { return {}; } })().department; const ok = ['IT','Facilities','HR','Finance','Customer Support']; return ok.find(x => x.toLowerCase() === String(d || '').trim().toLowerCase()) || 'Customer Support'; })() }}",
               "type": "string"
             }
           ]
@@ -155,10 +160,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        288,
-        -272
+        2000,
+        240
       ],
-      "id": "23f3f25d-3eee-4e0c-b9c1-f949e5beb72c",
+      "id": "c2a26459-664a-4e28-82a5-b385dd43beba",
       "name": "Parse classification"
     },
     {
@@ -166,16 +171,16 @@
         "operation": "update",
         "collection": "tickets",
         "updateKey": "=_id",
-        "fields": "category,urgency,status",
+        "fields": "category,urgency,department,status",
         "options": {}
       },
       "type": "n8n-nodes-base.mongoDb",
       "typeVersion": 1.3,
       "position": [
-        336,
-        208
+        2224,
+        240
       ],
-      "id": "360f2da7-1e88-4f37-b40e-b500137454d9",
+      "id": "0d9752f6-2163-4e2b-86c9-360a7f4b27ff",
       "name": "Save category & priority",
       "credentials": {
         "mongoDb": {
@@ -188,14 +193,14 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "qwen2.5:latest",
+          "value": "llama3.2:latest",
           "mode": "list",
-          "cachedResultName": "qwen2.5:latest"
+          "cachedResultName": "llama3.2:latest"
         },
         "messages": {
           "values": [
             {
-              "content": "=You are a professional customer support agent for an e-commerce company. Write a polite, empathetic reply to a customer's complaint.\n\nCustomer's complaint: {{ $('Build ticket record').item.json.problem }}\n\nProduct/item: {{ $('Build ticket record').item.json.item }}\n\nIssue category: {{ $json.category }}\n\nUrgency: {{ $json.urgency }}\n\nGuidelines:\n\n- Acknowledge their specific problem (mention the actual issue, not just the category)\n\n- Be warm and apologetic, but professional\n\n- Give a clear next step or reassurance\n\n- Keep it short: 3-4 sentences max\n\n- Sign off as \"Los Polos Hermanos\"\n\n- Do NOT mention internal labels like category or urgency to the customer\n\nWrite ONLY the reply message, nothing else."
+              "content": "=You are a professional customer support agent for an e-commerce company. Write a polite, empathetic reply to a customer's complaint.\n\nCustomer's complaint: {{ $('Build ticket record').item.json.problem }}\n\nProduct/item: {{ $('Build ticket record').item.json.item }}\n\nIssue category: {{ $json.category }}\n\nUrgency: {{ $json.urgency }}\n\nGuidelines:\n\n- Acknowledge their specific problem (mention the actual issue, not just the category)\n\n- Be warm and apologetic, but professional\n\n- Give a clear next step or reassurance\n\n- Keep it short: 3-4 sentences max\n\n- Sign off as \"Support Team\"\n\n- Do NOT mention internal labels like category or urgency to the customer\n\nWrite ONLY the reply message, nothing else."
             }
           ]
         },
@@ -204,10 +209,10 @@
       "type": "@n8n/n8n-nodes-langchain.ollama",
       "typeVersion": 1,
       "position": [
-        416,
-        -32
+        2448,
+        240
       ],
-      "id": "e9f83c90-9e73-45ee-9ba9-c6295a92abbc",
+      "id": "028d9d64-6a20-4585-93d0-e73389efda56",
       "name": "Draft suggested reply",
       "credentials": {
         "ollamaApi": {
@@ -229,7 +234,7 @@
             {
               "id": "a583655c-2ba1-412c-b999-4b05e27cbdd4",
               "name": "_id",
-              "value": "={{ $('Save ticket to DB').item.json._id.toString() }}",
+              "value": "={{ $('Find ticket').item.json._id.toString() }}",
               "type": "string"
             },
             {
@@ -245,10 +250,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        688,
-        -256
+        2800,
+        240
       ],
-      "id": "9087dc11-0e2d-4b91-abd2-4679563e6d0a",
+      "id": "481fb33c-e6c3-457d-a31a-c257e8f5a7eb",
       "name": "Format approval message"
     },
     {
@@ -262,10 +267,10 @@
       "type": "n8n-nodes-base.mongoDb",
       "typeVersion": 1.3,
       "position": [
-        736,
-        224
+        3024,
+        432
       ],
-      "id": "0c0fe7c8-abbd-41e4-ae2d-7e9b27dfc88f",
+      "id": "e8c489a6-a4e2-4e1c-89f0-e558e6c28c64",
       "name": "Save draft reply",
       "credentials": {
         "mongoDb": {
@@ -306,10 +311,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1024,
-        -256
+        3024,
+        48
       ],
-      "id": "a626ea85-a7a5-4425-aad8-bccc29088df7",
+      "id": "c24e4e38-e528-4004-895a-e33704998e63",
       "name": "Send to Telegram for approval",
       "webhookId": "8fe94a73-9b67-45d5-8d71-7be035ad1892",
       "retryOnFail": true,
@@ -329,28 +334,63 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -400,
-        0
+        976,
+        240
       ],
-      "id": "c918feae-03f4-401a-9058-3b667f2ea83b",
+      "id": "6264d987-4191-4972-89fc-815811880392",
       "name": "Webhook",
       "webhookId": "e3cfeb26-51e0-474a-b2d1-84ed040dc017"
+    },
+    {
+      "parameters": {
+        "jsCode": "const t = $('Find ticket').item.json;\nconst history = (t.statusHistory || []).map(({ status, note, actor, updatedAt }) => ({ status, note, actor, updatedAt }));\nconst now = Date.now();\nconst add = (status, note, actor, offsetMs = 0) => history.push({ status, note, actor, updatedAt: new Date(now + offsetMs).toISOString() });\nconst p = $('Parse classification').item.json;\nadd('classified', `Classified as ${p.category}, ${p.urgency} urgency, routed to ${p.department}`, 'system');\nadd('awaiting_approval', 'AI draft reply ready, awaiting approval', 'system', 1000);\nreturn [{ json: { _id: t._id.toString(), statusHistory: history } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        240
+      ],
+      "id": "1447daae-e135-4811-b419-a17b806dc4f9",
+      "name": "Log classified + draft"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "tickets",
+        "updateKey": "_id",
+        "fields": "statusHistory",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.3,
+      "position": [
+        3248,
+        240
+      ],
+      "id": "33b21a44-80c0-4361-9fa8-eca48eb2d4be",
+      "name": "Save history (classified + draft)",
+      "credentials": {
+        "mongoDb": {
+          "id": "i8aaMawoHEq67xvC",
+          "name": "MongoDB account"
+        }
+      }
     }
   ],
-  "pinData": {},
   "connections": {
     "Build ticket record": {
       "main": [
         [
           {
-            "node": "Save ticket to DB",
+            "node": "Find ticket",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Save ticket to DB": {
+    "Find ticket": {
       "main": [
         [
           {
@@ -417,6 +457,11 @@
             "node": "Send to Telegram for approval",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Log classified + draft",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -431,23 +476,28 @@
           }
         ]
       ]
+    },
+    "Log classified + draft": {
+      "main": [
+        [
+          {
+            "node": "Save history (classified + draft)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "timeSavedMode": "fixed",
     "errorWorkflow": "QxMxw8S60HTFpBkM",
     "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "availableInMCP": true
   },
-  "versionId": "ba70500b-016f-4351-9dcf-68f51efff983",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "a6c952d8d191187d9b11c6a3b097e77b902efc7e4d72d526142941b472153203"
-  },
-  "nodeGroups": [],
-  "id": "8CyRVWGaXIE323Uj",
+  "pinData": {},
+  "active": false,
   "tags": []
 }

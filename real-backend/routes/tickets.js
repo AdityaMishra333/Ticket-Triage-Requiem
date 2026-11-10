@@ -5,7 +5,6 @@ const auth = require("../middleware/auth");
 const adminAuth = require("../middleware/adminAuth");
 const { emailCustomer, redraftReply } = require("../services/review");
 
-// Fields a customer may set; status, draftReply, category etc. are written by n8n / admins only
 const CUSTOMER_FIELDS = ["customerName", "subject", "item", "serviceDate", "problem", "yourEmail"];
 
 router.post("/", auth, async (req, res) => {
@@ -21,7 +20,6 @@ router.post("/", auth, async (req, res) => {
 
     try {
       if (!process.env.N8N_WEBHOOK_URL) throw new Error("N8N_WEBHOOK_URL is not set");
-      // Timeout so a dead ngrok tunnel can't hang the request until Vercel kills the function
       await axios.post(process.env.N8N_WEBHOOK_URL, {
         ticketId: ticket.ticketId,
         "Customer Name": ticket.customerName,
@@ -78,9 +76,9 @@ router.get("/track/:ticketId", auth, async (req, res) => {
 router.get("/admin/:ticketId", adminAuth, async (req, res) => {
   try {
     const ticket = await Ticket.findOne({ ticketId: req.params.ticketId.toUpperCase() });
-    if (!ticket) 
+    if (!ticket)
       return res.status(404).json({ message: "Ticket not found" });
-    
+
     res.json(ticket);
   } catch (err) {
 
@@ -91,7 +89,6 @@ router.get("/admin/:ticketId", adminAuth, async (req, res) => {
 
 router.patch("/admin/:ticketId", adminAuth, async (req, res) => {
   try{
-
 
     const ticket = await Ticket.findOne({ ticketId: req.params.ticketId.toUpperCase() })
     if(!ticket) return res.status(404).json({message : "Ticket not found"});
@@ -125,7 +122,6 @@ router.patch("/admin/:ticketId", adminAuth, async (req, res) => {
   }
 })
 
-// Admin review of the AI draft reply (replaces the old Telegram approve/reject buttons)
 router.post("/admin/:ticketId/review", adminAuth, async (req, res) => {
   try {
     const { action } = req.body;

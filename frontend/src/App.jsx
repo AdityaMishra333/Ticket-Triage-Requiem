@@ -25,7 +25,6 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/create-ticket" element={<CreateTicket />} />
                         <Route path="/track-ticket" element={<TrackTicket />} />
-                        {/* ADMIN ONLY routes: the admin-role check is in AuthValidator (paths starting with /admin) */}
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/admin/tickets/:ticketId" element={<AdminTicketDetails />} />
                         <Route path="/tickets/:ticketId" element={<TicketDetails />}
